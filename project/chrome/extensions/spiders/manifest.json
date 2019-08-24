@@ -8,9 +8,13 @@
   ],
   "content_scripts": [
     {
-      "run_at": "document_idle",
+      "run_at": "document_end",
       "matches": ["*://*/*"],
-      "js": ["index.js"]
+      "js": [
+        "jquery.min.js",
+        "commons.js",
+        "sougou-weixin-search-page.js",
+        "spiders.js"]
     }
   ]
 }
