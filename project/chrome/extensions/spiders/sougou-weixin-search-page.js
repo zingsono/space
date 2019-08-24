@@ -15,11 +15,11 @@ let clickSearch = async () => {
 };
 
 // 点击目标文章链接，打开标签页
-let _blankClick = async (seconds = 120)=>{
+let _blankClick = async (seconds = 120) => {
     await MS.sleep(3);
     let wxli = $('.news-list li');
-    console.log('匹配数据列表数量: ',wxli.length);
-    for (let item of wxli){
+    console.log('匹配数据列表数量: ', wxli.length);
+    for (let item of wxli) {
         let a = $(item).children('.txt-box').children('h3').children('a');
         await MS.sleep(seconds);
         console.log('执行点击事件 ');
@@ -28,9 +28,9 @@ let _blankClick = async (seconds = 120)=>{
 };
 
 // 点击下一页按钮
-let npClick = async ()=>{
+let npClick = async () => {
     await MS.sleep(10);
-    $('.np')[0].click();
+    $('.np') && $('.np')[0].click();
 }
 
 (async (is) => {

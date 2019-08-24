@@ -1,0 +1,17 @@
+# IntelliJ IDEA
+.idea
+*.iml
+
+# VS Code
+.vscode
+
+# NodeJs
+node_modules
+
+# Golang
+pkg
+bin
+
+
+logs
+*.log
