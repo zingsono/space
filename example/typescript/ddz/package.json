@@ -1,0 +1,17 @@
+{
+  "name": "ddz",
+  "version": "1.0.0",
+  "description": "ddz",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zengs",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.125"
+  }
+}

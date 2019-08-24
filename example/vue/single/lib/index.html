@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>使用button组件：</p>
+<button onClick="updateButton()">时间按钮</button>
+<div id="app">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script src="index.js"></script>
+<script>
+    window.onload = function () {
+        let vm = new Vue({
+            el:'#app',
+            template: '<ms-button :value="value"></ms-button>',
+            data:{
+                value:'按钮1'
+            },
+            methods:{
+                //确认按钮时调用方法
+
+                //关闭时调用方法
+
+                //弹出方法
+                updateText(v){
+                    this.value = v
+                }
+            }
+        })
+        window.updateButton = function() {
+            vm.updateText(new Date())
+        }
+
+    }
+
+</script>
+</body>
+</html>
