@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title></title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                height: 99%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="h-btn"></div>
+            <div class="h-addr" id="web-addr"><input width="500px" value="https://www.baidu.com"></div>
+            <div class="h-btn"></div>
+        </div>
+        <webview id="webview" src="https://www.taobao.com/"></webview>
+        <script>
+            window.onload = function() {
+                let webview = document.getElementById('webview');
+                // webview.addEventListener('loadstart', function() {
+                //     console.log('loadstart---------');
+                // });
+                // webview.addEventListener('loadstop', function() {
+                //     console.log('loadstop-----------', this.getUserAgent());
+                // });
+                webview.addEventListener('contentload', function() {
+                    webview.executeScript({
+                        code: `
+                        document.getElementById("q").focus()
+                        //设置搜索框内容
+                        document.getElementById("q").value = "女装";
+                        document.getElementById("q").style.border = "solid 2px red";
+                        setTimeout( function(){
+                            //延迟5秒点击搜索按钮
+                            //document.getElementsByClassName("btn-search tb-bg")[0].click();
+                        }, 5 * 1000 );
+                        `
+                    });
+                });
+            };
+        </script>
+    
+</html>

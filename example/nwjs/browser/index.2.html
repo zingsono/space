@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css">
+    <script src="http://cdn.amazeui.org/amazeui/2.7.2/js/amazeui.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .content{height: 90%;}
+
+        #target-url {
+            width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="h-btn"></div>
+        <div class="h-addr" id="web-addr">
+            <!-- about:blank -->
+            <input id="target-url" value="https://baidu.com" placeholder="target url">
+            <input type="button" id="target-btn" value="GO">
+            <input type="button" id="target-refresh" value="刷新">
+        </div>
+        <div class="h-btn"></div>
+    </div>
+    <hr>
+    <div class="content">
+        <webview id="webview"></webview>
+    </div>
+    <script>
+        window.onload = function () {
+            let webview = document.getElementsByTagName('webview')[0]
+            page(webview)
+        };
+
+        function page(webview) {
+            webview.addEventListener('loadstart', function () {
+                console.log('loadstart---------', this.src)
+                document.getElementById("target-url").value = this.src
+            });
+            webview.addEventListener('loadstop', function () {
+                console.log('loadstop-----------', this.getUserAgent())
+            });
+            webview.addEventListener('newwindow', function (e) {
+                for(var i = 0;i<document.getElementsByTagName('webview').length;i++){
+                    document.getElementsByTagName('webview')[i].style.display = 'none'
+                }
+                let w = document.getElementsByClassName('content')[0]
+                var newWebview = document.createElement('webview');
+                w.appendChild(newWebview);
+                document.getElementById("target-url").value = e.targetUrl
+                e.window.attach(newWebview);
+
+
+                //加载新页面
+                //page(newWebview);
+            })
+            document.getElementById('target-btn').addEventListener('click', function () {
+                webview.src = document.getElementById("target-url").value
+            })
+            document.getElementById('target-btn').click()
+            document.getElementById('target-refresh').addEventListener('click', function () {
+                webview.reload()
+            })
+        }
+    </script>
+
+</html>

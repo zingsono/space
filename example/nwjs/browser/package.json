@@ -1,0 +1,24 @@
+{
+  "name": "browser",
+  "version": "1.0.0",
+  "description": "nwjs",
+  "main": "index.html",
+  "scripts": {
+    "test": "xx"
+  },
+  "keywords": [
+    "nwjs"
+  ],
+  "author": "Zengs",
+  "license": "ISC",
+  "dependencies": {},
+  "window": {
+    "title": "标题",
+    "icon": "",
+    "toolbar": true,
+    "resizable": true,
+    "frame": true,
+    "width": 1400,
+    "height": 900
+  }
+}

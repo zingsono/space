@@ -1,0 +1,18 @@
+# IntelliJ IDEA
+.idea
+*.iml
+
+# VS Code
+.vscode
+
+# NodeJs
+node_modules
+
+# Golang
+
+# JavaEE
+
+
+
+logs
+*.log

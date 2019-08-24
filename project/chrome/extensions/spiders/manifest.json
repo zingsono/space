@@ -1,0 +1,16 @@
+{
+  "name": "Spiders",
+  "version": "1.0",
+  "description": "给浏览器当前访问的网页注入JavaScript脚本。",
+  "manifest_version": 2,
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "run_at": "document_idle",
+      "matches": ["*://*/*"],
+      "js": ["index.js"]
+    }
+  ]
+}
