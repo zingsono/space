@@ -9,6 +9,7 @@
 node_modules
 
 # Golang
+*.exe
 
 # JavaEE
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hql/graph"
+	"mic/graph"
 )
 
 func main() {
