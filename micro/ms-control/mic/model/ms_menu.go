@@ -3,7 +3,7 @@ package model
 
 type (
 	// 菜单编号、菜单名称、图标、链接、排序、备注、上级编号、服务名、状态（1=显示 0=隐藏）、操作按钮（[编号、名称、备注]）、接口数据权限（）
-	//mid,title,icon,link,sort,remark,service,status,operate,permissions
+	// mid,title,icon,link,sort,remark,service,status,operate,permissions
 	MsMenu struct {
 		Mid         string        `json:mid`
 		Title       string        `json:title`
@@ -33,9 +33,3 @@ type (
 		Query []string `json:query`
 	}
 )
-
-
-
-
-
-
