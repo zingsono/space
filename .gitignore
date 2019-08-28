@@ -1,3 +1,6 @@
+logs
+*.log
+
 # IntelliJ IDEA
 .idea
 *.iml
@@ -12,8 +15,6 @@ node_modules
 *.exe
 
 # JavaEE
+out
 
 
-
-logs
-*.log
