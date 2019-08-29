@@ -5,6 +5,11 @@ logs
 .idea
 *.iml
 
+# Eclipse
+.settings
+.project
+.classpath
+
 # VS Code
 .vscode
 
@@ -13,6 +18,7 @@ node_modules
 
 # Golang
 *.exe
+pkg
 
 # JavaEE
 out
