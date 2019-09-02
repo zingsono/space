@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type User struct {
+type Test struct {
 	Name string
 	Age  int64
 }
@@ -32,7 +32,7 @@ func main() {
 	cname := collection.Name()
 	log.Println("cname=" + cname)
 
-	oneRs, err := collection.InsertOne(context.Background(), &User{
+	oneRs, err := collection.InsertOne(context.Background(), &Test{
 		Name: "宋江",
 		Age:  102,
 	})
@@ -41,7 +41,6 @@ func main() {
 	}
 	log.Println(primitive.NewObjectID().Hex())
 	log.Println(oneRs.InsertedID)
-	// ObjectId转为字符串显示
 	log.Println(oneRs.InsertedID.(primitive.ObjectID).Hex())
 	log.Println(reflect.TypeOf(oneRs.InsertedID))
 
