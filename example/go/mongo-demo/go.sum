@@ -10,6 +10,8 @@ github.com/zingsono/space v0.0.0-20190903054545-cf54a9240fe0 h1:hexdCA7nAuVTVzZ1
 github.com/zingsono/space v0.0.0-20190903054545-cf54a9240fe0/go.mod h1:UGYptGDf9V4l/WLWPfVlYrD3NDS+XNy4Bl7DYGn6umE=
 github.com/zingsono/space v0.0.0-20190903060229-0db5ad7eceb3 h1:QJYRMEedZwXVuQtkJ49ZfRoE708xATKrx6l8z7WQRQ4=
 github.com/zingsono/space v0.0.0-20190903060229-0db5ad7eceb3/go.mod h1:UGYptGDf9V4l/WLWPfVlYrD3NDS+XNy4Bl7DYGn6umE=
+github.com/zingsono/space v0.0.0-20190903061652-56c51cc6e662 h1:gkkO3RQnpR9lnI8SOBONzK3w5bL+YOoOrHYCST1npDc=
+github.com/zingsono/space v0.0.0-20190903061652-56c51cc6e662/go.mod h1:UGYptGDf9V4l/WLWPfVlYrD3NDS+XNy4Bl7DYGn6umE=
 go.mongodb.org/mongo-driver v1.1.0 h1:aeOqSrhl9eDRAap/3T5pCfMBEBxZ0vuXBP+RMtp2KX8=
 go.mongodb.org/mongo-driver v1.1.0/go.mod h1:u7ryQJ+DOzQmeO7zB6MHyr8jkEQvC8vH7qLUO4lqsUM=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
