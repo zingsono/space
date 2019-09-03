@@ -1,3 +1,4 @@
+// mongo驱动文档 https://godoc.org/go.mongodb.org/mongo-driver/mongo
 package main
 
 import (
@@ -26,7 +27,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	log.Println("client...")
+	client.Database("test").Collection("test").Find(context.Background(), "{}")
 	database := client.Database("test")
 	collection := database.Collection("test")
 	cname := collection.Name()
