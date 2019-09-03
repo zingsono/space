@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/zingsono/space/library/go/libmongo"
 )
 
 type User struct {
@@ -20,6 +22,8 @@ type User struct {
 
 func main() {
 	log.Println("BEG------------------------------")
+
+	libmongo.Db()
 
 	var opt = options.Client().ApplyURI("mongodb://test:test@121.40.83.200:37017/test?authSource=admin&authMechanism=SCRAM-SHA-1")
 	var ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
