@@ -1,4 +1,4 @@
-module libmongo
+module github.com/zingsono/space/library/go/libmongo
 
 go 1.12
 
