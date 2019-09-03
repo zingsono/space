@@ -7,9 +7,9 @@
 目录说明：
 
 - blog 技术笔记
-- project 个人项目代码
+- project 项目代码
 - library 通用代码库
 - micro 微服务项目
-- example 项目示例代码
+- example 示例代码
 
 

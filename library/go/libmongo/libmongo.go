@@ -9,7 +9,8 @@ import (
 )
 
 // Mongodb连接字符串，应用通过配置读取并赋值
-var ConnectionString string
+// 默认连接本地Mongodb
+var ConnectionString = "mongodb://127.0.0.1:27017"
 
 func Db(db string) *mongo.Database {
 	var opt = options.Client().ApplyURI(ConnectionString)

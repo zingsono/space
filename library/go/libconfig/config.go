@@ -1,4 +1,4 @@
-package mconfig
+package libconfig
 
 // 配置文件
 type Config struct {
