@@ -28,18 +28,18 @@ var UserObject = graphql.NewObject(graphql.ObjectConfig{
 	Name:       "User",
 	Interfaces: nil,
 	Fields: graphql.Fields{
-		"uid":       &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"loginId":   &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"email":     &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"mobile":    &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"nickname":  &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"avatar":    &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"roles":     &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"remark":    &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"createdAt": &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"createdBy": &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"updatedAt": &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
-		"updatedBy": &graphql.Field{Name: "", Type: nil, Args: nil, Resolve: nil, DeprecationReason: "", Description: ""},
+		"uid":       &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"loginId":   &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"email":     &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"mobile":    &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"nickname":  &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"avatar":    &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"roles":     &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"remark":    &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"createdAt": &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"createdBy": &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"updatedAt": &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
+		"updatedBy": &graphql.Field{Name: "", Type: graphql.String, Args: nil, Resolve: func(p graphql.ResolveParams) (i interface{}, e error) { return "a", e }, DeprecationReason: "", Description: ""},
 	},
 	IsTypeOf:    nil,
 	Description: "",
@@ -48,30 +48,30 @@ var UserObject = graphql.NewObject(graphql.ObjectConfig{
 var UserList = graphql.NewList(UserObject)
 
 var UserPage = graphql.NewObject(graphql.ObjectConfig{
-	Name:       "",
+	Name:       "UserPage",
 	Interfaces: nil,
 	Fields: graphql.Fields{
 		"total": &graphql.Field{
 			Name:              "",
-			Type:              nil,
+			Type:              graphql.Int,
 			Args:              nil,
-			Resolve:           nil,
+			Resolve:           func(p graphql.ResolveParams) (i interface{}, e error) { return i, e },
 			DeprecationReason: "",
 			Description:       "",
 		},
 		"pageSize": &graphql.Field{
 			Name:              "",
-			Type:              nil,
+			Type:              graphql.Int,
 			Args:              nil,
-			Resolve:           nil,
+			Resolve:           func(p graphql.ResolveParams) (i interface{}, e error) { return i, e },
 			DeprecationReason: "",
 			Description:       "",
 		},
 		"pageNum": &graphql.Field{
 			Name:              "",
-			Type:              nil,
+			Type:              graphql.Int,
 			Args:              nil,
-			Resolve:           nil,
+			Resolve:           func(p graphql.ResolveParams) (i interface{}, e error) { return i, e },
 			DeprecationReason: "",
 			Description:       "",
 		},
@@ -79,7 +79,7 @@ var UserPage = graphql.NewObject(graphql.ObjectConfig{
 			Name:              "",
 			Type:              UserList,
 			Args:              nil,
-			Resolve:           nil,
+			Resolve:           func(p graphql.ResolveParams) (i interface{}, e error) { return i, e },
 			DeprecationReason: "",
 			Description:       "",
 		},
@@ -89,9 +89,9 @@ var UserPage = graphql.NewObject(graphql.ObjectConfig{
 })
 
 // 查询操作字段定义
-var UserQueryFields = map[string]*Field{
+var UserQueryFields = graphql.Fields{
 	"User": &graphql.Field{
-		Name: "",
+		Name: "user",
 		Type: UserObject,
 		Args: nil,
 		Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
@@ -116,78 +116,60 @@ var UserQueryFields = map[string]*Field{
 }
 
 // 更新操作字段定义
-var UserMutationFields = map[string]*Field{
+var UserMutationFields = graphql.Fields{
 	"User": &graphql.Field{
 		Name: "",
 		Type: graphql.NewObject(graphql.ObjectConfig{
-			Name:       "",
+			Name:       "UserOper",
 			Interfaces: nil,
 			Fields: graphql.Fields{
 				"insert": &graphql.Field{
 					Name: "",
-					Type: graphql.NewObject(graphql.ObjectConfig{
-						Name:        "",
-						Interfaces:  nil,
-						Fields:      nil,
-						IsTypeOf:    nil,
-						Description: "",
-					}),
+					Type: graphql.Int,
 					Args: graphql.FieldConfigArgument{
 						"nickname": &graphql.ArgumentConfig{
-							Type:         nil,
+							Type:         graphql.String,
 							DefaultValue: nil,
 							Description:  "",
 						},
 					},
 					Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 
-						return i, e
+						return 1, e
 					},
 					DeprecationReason: "",
 					Description:       "",
 				},
 				"update": &graphql.Field{
 					Name: "",
-					Type: graphql.NewObject(graphql.ObjectConfig{
-						Name:        "",
-						Interfaces:  nil,
-						Fields:      nil,
-						IsTypeOf:    nil,
-						Description: "",
-					}),
+					Type: graphql.Int,
 					Args: graphql.FieldConfigArgument{
 						"nickname": &graphql.ArgumentConfig{
-							Type:         nil,
+							Type:         graphql.String,
 							DefaultValue: nil,
 							Description:  "",
 						},
 					},
 					Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 
-						return i, e
+						return 1, e
 					},
 					DeprecationReason: "",
 					Description:       "",
 				},
 				"delete": &graphql.Field{
 					Name: "",
-					Type: graphql.NewObject(graphql.ObjectConfig{
-						Name:        "",
-						Interfaces:  nil,
-						Fields:      nil,
-						IsTypeOf:    nil,
-						Description: "",
-					}),
+					Type: graphql.Int,
 					Args: graphql.FieldConfigArgument{
 						"nickname": &graphql.ArgumentConfig{
-							Type:         nil,
+							Type:         graphql.String,
 							DefaultValue: nil,
 							Description:  "",
 						},
 					},
 					Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 
-						return i, e
+						return 1, e
 					},
 					DeprecationReason: "",
 					Description:       "",
@@ -197,7 +179,7 @@ var UserMutationFields = map[string]*Field{
 			Description: "",
 		}),
 		Args:              nil,
-		Resolve:           nil,
+		Resolve:           func(p graphql.ResolveParams) (i interface{}, e error) { return i, e },
 		DeprecationReason: "",
 		Description:       "",
 	},

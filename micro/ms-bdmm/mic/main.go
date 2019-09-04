@@ -1,13 +1,32 @@
 package main
 
 import (
+	"io"
 	"log"
-	"mic/router"
+	"net/http"
+
+	"github.com/rs/cors"
+
+	"mic/model"
 )
 
 func main() {
+	log.Println("EEG--------------------------------------------------------")
+	log.Println("** Server start....")
 
-	log.Println("hello word!!!")
+	// 默认首页
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "version 1")
+	})
 
-	router.ListenServer()
+	// TODO 设置登录会话安全验证
+	// Graphql服务
+	http.Handle("/graphql", cors.Default().Handler(model.GraphqlHttpHandler))
+
+	// HttpServer
+	err := http.ListenAndServe(":50508", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("END--------------------------------------------------------")
 }
