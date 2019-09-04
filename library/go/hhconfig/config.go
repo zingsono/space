@@ -1,4 +1,4 @@
-package libconfig
+package hhconfig
 
 // 配置文件
 type Config struct {

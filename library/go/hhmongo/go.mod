@@ -1,4 +1,4 @@
-module github.com/zingsono/space/library/go/libmongo
+module github.com/zingsono/space/library/go/hhmongo
 
 go 1.12
 

@@ -1,5 +1,5 @@
 // 模块错误码定义
-package libmongo
+package hhmongo
 
 import (
 	"log"

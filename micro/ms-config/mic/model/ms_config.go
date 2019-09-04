@@ -18,15 +18,32 @@ type MsConfig struct {
 
 // Graphql Query `ms_config`
 var MsConfigQueryFields = ql.Fields{
-	"config": &ql.Field{
+	"configFindOne": &ql.Field{
 		Name: "",
-		Type: MsConfigQueryType,
+		Type: ConfigObject,
+		Args: ql.FieldConfigArgument{
+			"name": &ql.ArgumentConfig{
+				Type:         ql.String,
+				DefaultValue: nil,
+				Description:  "服务名，根据服务名查询指定服务配置信息",
+			},
+		},
+		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
+			name := p.Args["name"].(string)
+			return &MsConfig{Name: name, Value: "{}"}, e
+		},
+		DeprecationReason: "",
+		Description:       "单条数据查询",
+	},
+	"configFind": &ql.Field{
+		Name: "",
+		Type: ql.NewList(ConfigObject),
 		Args: nil,
 		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 			return i, e
 		},
 		DeprecationReason: "",
-		Description:       "配置管理",
+		Description:       "列表查询",
 	},
 }
 
@@ -44,8 +61,8 @@ var MsConfigMutationFields = ql.Fields{
 	},
 }
 
-var MsConfigQueryType = ql.NewObject(ql.ObjectConfig{
-	Name:       "ConfigQueryType",
+var ConfigObject = ql.NewObject(ql.ObjectConfig{
+	Name:       "ConfigObject",
 	Interfaces: nil,
 	Fields: ql.Fields{
 		"name": &ql.Field{
@@ -53,7 +70,7 @@ var MsConfigQueryType = ql.NewObject(ql.ObjectConfig{
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return i, e
+				return "", e
 			},
 			DeprecationReason: "",
 			Description:       "",
@@ -63,7 +80,7 @@ var MsConfigQueryType = ql.NewObject(ql.ObjectConfig{
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return i, e
+				return "", e
 			},
 			DeprecationReason: "",
 			Description:       "",
@@ -73,17 +90,17 @@ var MsConfigQueryType = ql.NewObject(ql.ObjectConfig{
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return i, e
+				return "", e
 			},
 			DeprecationReason: "",
 			Description:       "",
 		},
 		"updatedAt": &ql.Field{
 			Name: "",
-			Type: ql.DateTime,
+			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return i, e
+				return "", e
 			},
 			DeprecationReason: "",
 			Description:       "",
@@ -93,7 +110,9 @@ var MsConfigQueryType = ql.NewObject(ql.ObjectConfig{
 			Type: ql.DateTime,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return i, e
+				t := time.Now().Format(time.RFC3339)
+				date, e := time.Parse(t, time.RFC3339)
+				return date, e
 			},
 			DeprecationReason: "",
 			Description:       "",

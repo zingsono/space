@@ -1,4 +1,4 @@
-package libcrypto
+package hhcrypto
 
 import (
 	"crypto/aes"

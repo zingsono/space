@@ -1,6 +1,9 @@
 package config
 
 type Config struct {
+	// 应用配置
+	Name string
+	// Http服务
 	Server Server `json:"server"`
 
 	// Mongodb连接配置，key=数据库名 value=连接URL
@@ -15,6 +18,7 @@ var _config = new(Config)
 
 // 默认配置初始化
 func init() {
+	_config.Name = "config"
 	_config.Server.Port = 50508
 
 }
