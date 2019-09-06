@@ -30,7 +30,7 @@ var MsConfigQueryFields = ql.Fields{
 		},
 		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 			name := p.Args["name"].(string)
-			return &MsConfig{Name: name, Value: "{}"}, e
+			return &MsConfig{Name: name, Value: "op"}, e
 		},
 		DeprecationReason: "",
 		Description:       "单条数据查询",
@@ -65,22 +65,13 @@ var ConfigObject = ql.NewObject(ql.ObjectConfig{
 	Name:       "ConfigObject",
 	Interfaces: nil,
 	Fields: ql.Fields{
-		"name": &ql.Field{
-			Name: "",
-			Type: ql.String,
-			Args: nil,
-			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", e
-			},
-			DeprecationReason: "",
-			Description:       "",
-		},
+		"name": &ql.Field{Type: ql.String, Description: "服务名"},
 		"value": &ql.Field{
 			Name: "",
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", e
+				return "", nil
 			},
 			DeprecationReason: "",
 			Description:       "",
@@ -90,7 +81,7 @@ var ConfigObject = ql.NewObject(ql.ObjectConfig{
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", e
+				return "", nil
 			},
 			DeprecationReason: "",
 			Description:       "",
@@ -100,19 +91,18 @@ var ConfigObject = ql.NewObject(ql.ObjectConfig{
 			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", e
+				return "", nil
 			},
 			DeprecationReason: "",
 			Description:       "",
 		},
 		"createdAt": &ql.Field{
 			Name: "",
-			Type: ql.DateTime,
+			Type: ql.String,
 			Args: nil,
 			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 				t := time.Now().Format(time.RFC3339)
-				date, e := time.Parse(t, time.RFC3339)
-				return date, e
+				return t, nil
 			},
 			DeprecationReason: "",
 			Description:       "",

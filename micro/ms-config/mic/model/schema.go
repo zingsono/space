@@ -5,6 +5,8 @@ import (
 	"github.com/graphql-go/handler"
 )
 
+// Github更新操作文档定义 https://developer.github.com/v4/mutation/
+
 // Http Handler
 var GraphqlHttpHandler = handler.New(&handler.Config{
 	Schema:   &GraphqlSchema,
