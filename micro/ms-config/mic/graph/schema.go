@@ -1,4 +1,4 @@
-package model
+package graph
 
 import (
 	"github.com/graphql-go/graphql"
@@ -29,7 +29,7 @@ var QueryType = graphql.NewObject(graphql.ObjectConfig{
 	Name:       "Query",
 	Interfaces: nil,
 	Fields: FieldsMerge(
-		MsConfigQueryFields,
+		ConfigQueryFields,
 	),
 	IsTypeOf:    nil,
 	Description: "查询操作",
@@ -40,7 +40,7 @@ var MutationType = graphql.NewObject(graphql.ObjectConfig{
 	Name:       "Mutation",
 	Interfaces: nil,
 	Fields: FieldsMerge(
-		MsConfigMutationFields,
+		ConfigMutationFields,
 	),
 	IsTypeOf:    nil,
 	Description: "更新操作",

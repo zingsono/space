@@ -9,7 +9,7 @@ import (
 	"github.com/rs/cors"
 
 	"mic/config"
-	"mic/model"
+	"mic/graph"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 
 	// TODO 设置登录会话安全验证
 	// Graphql服务
-	http.Handle("/graphql", cors.Default().Handler(model.GraphqlHttpHandler))
+	http.Handle("/graphql", cors.Default().Handler(graph.GraphqlHttpHandler))
 
 	// HttpServer
 	err := http.ListenAndServe(fmt.Sprintf(":%d", conf.Server.Port), nil)

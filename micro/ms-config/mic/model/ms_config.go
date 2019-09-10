@@ -2,112 +2,41 @@ package model
 
 import (
 	"time"
-
-	ql "github.com/graphql-go/graphql"
 )
 
 // 配置信息管理
 // 字段：服务名、配置JSON内容、备注、更新时间、创建时间
 type MsConfig struct {
-	Name      string      `json:"name"`
-	Value     string      `json:"value"`
-	Remark    string      `json:"remark"`
-	UpdatedAt time.Timer  `json:"updatedAt"`
-	CreatedAt time.Ticker `json:"createdAt"`
+	Name      string    `json:"name"`
+	Value     string    `json:"value"`
+	Remark    string    `json:"remark"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
-// Graphql Query `ms_config`
-var MsConfigQueryFields = ql.Fields{
-	"configFindOne": &ql.Field{
-		Name: "",
-		Type: ConfigObject,
-		Args: ql.FieldConfigArgument{
-			"name": &ql.ArgumentConfig{
-				Type:         ql.String,
-				DefaultValue: nil,
-				Description:  "服务名，根据服务名查询指定服务配置信息",
-			},
-		},
-		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-			name := p.Args["name"].(string)
-			return &MsConfig{Name: name, Value: "op"}, e
-		},
-		DeprecationReason: "",
-		Description:       "单条数据查询",
-	},
-	"configFind": &ql.Field{
-		Name: "",
-		Type: ql.NewList(ConfigObject),
-		Args: nil,
-		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-			return i, e
-		},
-		DeprecationReason: "",
-		Description:       "列表查询",
-	},
+func NewMsConfig(name string, value string, remark string) *MsConfig {
+	return &MsConfig{Name: name, Value: value, Remark: remark}
 }
 
-// Graphql Mutation `ms_config`
-var MsConfigMutationFields = ql.Fields{
-	"config": &ql.Field{
-		Name: "",
-		Type: ql.String,
-		Args: nil,
-		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-			return i, e
-		},
-		DeprecationReason: "",
-		Description:       "",
-	},
+func (*MsConfig) CollectionName() string {
+	return "ms_config"
 }
 
-var ConfigObject = ql.NewObject(ql.ObjectConfig{
-	Name:       "ConfigObject",
-	Interfaces: nil,
-	Fields: ql.Fields{
-		"name": &ql.Field{Type: ql.String, Description: "服务名"},
-		"value": &ql.Field{
-			Name: "",
-			Type: ql.String,
-			Args: nil,
-			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", nil
-			},
-			DeprecationReason: "",
-			Description:       "",
-		},
-		"remark": &ql.Field{
-			Name: "",
-			Type: ql.String,
-			Args: nil,
-			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", nil
-			},
-			DeprecationReason: "",
-			Description:       "",
-		},
-		"updatedAt": &ql.Field{
-			Name: "",
-			Type: ql.String,
-			Args: nil,
-			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				return "", nil
-			},
-			DeprecationReason: "",
-			Description:       "",
-		},
-		"createdAt": &ql.Field{
-			Name: "",
-			Type: ql.String,
-			Args: nil,
-			Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-				t := time.Now().Format(time.RFC3339)
-				return t, nil
-			},
-			DeprecationReason: "",
-			Description:       "",
-		},
-	},
-	IsTypeOf:    nil,
-	Description: "配置信息查询",
-})
+// 插入单条记录
+func (conf *MsConfig) Add(name string, value string, remark string) *MsConfig {
+	conf.Name = name
+	conf.Value = value
+	conf.Remark = remark
+	conf.UpdatedAt = time.Now()
+	conf.CreatedAt = time.Now()
+	return conf
+}
+
+// 插入一条记录，返回成功条数
+func (conf *MsConfig) InserOne() (int, error) {
+	conf.UpdatedAt = time.Now()
+	conf.CreatedAt = time.Now()
+
+	// config.MongoClient.Database("test").Collection("test").InsertOne()
+	return 1, nil
+}
