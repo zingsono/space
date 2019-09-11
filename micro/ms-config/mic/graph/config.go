@@ -87,34 +87,24 @@ var ConfigMutationFields = ql.Fields{
 		Type: ql.NewObject(ql.ObjectConfig{
 			Name: "ConfigMutationType",
 			Fields: ql.Fields{
-				"add": &ql.Field{
+				"save": &ql.Field{
 					Type: ql.Int,
 					Args: ql.FieldConfigArgument{
 						"name": &ql.ArgumentConfig{
-							Type:         nil,
+							Type:         ql.NewNonNull(ql.String),
 							DefaultValue: nil,
 							Description:  "服务名",
 						},
 						"value": &ql.ArgumentConfig{
-							Type:         nil,
+							Type:         ql.NewNonNull(ql.String),
 							DefaultValue: "{}",
 							Description:  "JSON格式配置信息",
 						},
 					},
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-						model.NewMsConfig("", "", "")
-						model.MsConfig{}.Add("config", "{}", "备注")
-
-						return 0, nil
+						return model.MsConfig{Name: p.Args["name"].(string), Value: p.Args["value"].(string)}.Save()
 					},
-					Description: "新增配置",
-				},
-				"edit": &ql.Field{
-					Name: "",
-					Type: ql.Int,
-
-					DeprecationReason: "",
-					Description:       "",
+					Description: "新增/更新配置，响应成功更新条数",
 				},
 				"del": &ql.Field{
 					Name: "",

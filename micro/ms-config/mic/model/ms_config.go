@@ -1,7 +1,14 @@
 package model
 
 import (
+	"context"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"mic/config"
 )
 
 // 配置信息管理
@@ -11,32 +18,15 @@ type MsConfig struct {
 	Value     string    `json:"value"`
 	Remark    string    `json:"remark"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedAt time.Time `json:"createdAt"`
 }
 
-func NewMsConfig(name string, value string, remark string) *MsConfig {
-	return &MsConfig{Name: name, Value: value, Remark: remark}
+func (*MsConfig) Collection() *mongo.Collection {
+	return config.Mongo{}.Ms().Collection("ms_config")
 }
 
-func (*MsConfig) CollectionName() string {
-	return "ms_config"
-}
-
-// 插入单条记录
-func (conf *MsConfig) Add(name string, value string, remark string) *MsConfig {
-	conf.Name = name
-	conf.Value = value
-	conf.Remark = remark
+// 保存数据，不存在新增，存在则更新
+func (conf *MsConfig) Save() (int64, error) {
 	conf.UpdatedAt = time.Now()
-	conf.CreatedAt = time.Now()
-	return conf
-}
-
-// 插入一条记录，返回成功条数
-func (conf *MsConfig) InserOne() (int, error) {
-	conf.UpdatedAt = time.Now()
-	conf.CreatedAt = time.Now()
-
-	// config.MongoClient.Database("test").Collection("test").InsertOne()
-	return 1, nil
+	updateResult, err := conf.Collection().UpdateOne(context.TODO(), bson.D{{"name", conf.Name}}, conf, options.UpdateOptions{}.SetUpsert(true))
+	return updateResult.ModifiedCount, err
 }
