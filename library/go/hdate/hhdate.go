@@ -1,5 +1,5 @@
 // 日期时间处理模块
-package hhdate
+package hdate
 
 import (
 	"time"

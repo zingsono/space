@@ -1,10 +1,18 @@
 package graph
 
 import (
+	"log"
+
 	ql "github.com/graphql-go/graphql"
 
 	"mic/model"
 )
+
+type Config struct {
+	Total int64
+	List  []model.MsConfig
+	Info  model.MsConfig
+}
 
 // Graphql Query
 var ConfigQueryFields = ql.Fields{
@@ -62,7 +70,6 @@ var ConfigQueryFields = ql.Fields{
 							"value":     &ql.Field{Type: ql.String, Description: "配置JSON字符串"},
 							"remark":    &ql.Field{Type: ql.String, Description: "配置备注描述信息"},
 							"updatedAt": &ql.Field{Type: ql.String, Description: "最后更新时间"},
-							"createdAt": &ql.Field{Type: ql.String, Description: "最后创建时间"},
 						},
 						Description: "配置信息",
 					}),
@@ -70,64 +77,46 @@ var ConfigQueryFields = ql.Fields{
 						"name": &ql.ArgumentConfig{Type: ql.String, Description: "服务名"},
 					},
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-						return i, nil
+						log.Printf("执行 query config info")
+						name := p.Args["name"].(string)
+						msConfig, e := (&model.MsConfig{}).FindOne(name)
+						return msConfig, e
 					},
 					Description: "配置信息详情",
 				},
 			},
 			Description: "配置信息查询类型",
 		}),
+		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
+			log.Printf("执行 query config")
+			rs := &Config{}
+			return rs, e
+		},
 		Description: "配置查询",
 	},
 }
 
 // Graphql Mutation
 var ConfigMutationFields = ql.Fields{
-	"config": &ql.Field{
-		Type: ql.NewObject(ql.ObjectConfig{
-			Name: "ConfigMutationType",
-			Fields: ql.Fields{
-				"save": &ql.Field{
-					Type: ql.Int,
-					Args: ql.FieldConfigArgument{
-						"name": &ql.ArgumentConfig{
-							Type:         ql.NewNonNull(ql.String),
-							DefaultValue: nil,
-							Description:  "服务名",
-						},
-						"value": &ql.ArgumentConfig{
-							Type:         ql.NewNonNull(ql.String),
-							DefaultValue: "{}",
-							Description:  "JSON格式配置信息",
-						},
-					},
-					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-						return model.MsConfig{Name: p.Args["name"].(string), Value: p.Args["value"].(string)}.Save()
-					},
-					Description: "新增/更新配置，响应成功更新条数",
-				},
-				"del": &ql.Field{
-					Name: "",
-					Type: ql.Int,
-					Args: nil,
-
-					DeprecationReason: "",
-					Description:       "",
-				},
-				"updateStatus": &ql.Field{
-					Name: "",
-					Type: ql.Int,
-					Args: nil,
-
-					DeprecationReason: "",
-					Description:       "",
-				},
+	"configSave": &ql.Field{
+		Type: UpdateResultType,
+		Args: ql.FieldConfigArgument{
+			"name": &ql.ArgumentConfig{
+				Type:         ql.NewNonNull(ql.String),
+				DefaultValue: nil,
+				Description:  "服务名",
 			},
-			Description: "更新",
-		}),
-		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
-			return nil, nil
+			"value": &ql.ArgumentConfig{
+				Type:         ql.NewNonNull(ql.String),
+				DefaultValue: "{}",
+				Description:  "JSON格式配置信息",
+			},
 		},
-		Description: "配置更新操作",
+		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
+			log.Printf("执行QL方法：%s", "config.configSave")
+			updateResult, err := (&(model.MsConfig{Name: p.Args["name"].(string), Value: p.Args["value"].(string)})).Save()
+			return updateResult, err
+		},
+		Description: "新增/更新配置，响应成功更新条数",
 	},
 }

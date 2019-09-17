@@ -1,4 +1,4 @@
-package hhmongo
+package hmongo
 
 import (
 	"context"

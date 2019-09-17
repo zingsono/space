@@ -8,14 +8,13 @@ import (
 
 	"github.com/rs/cors"
 
-	"mic/config"
 	"mic/graph"
+	"mic/helper/hconfig"
 )
 
 func main() {
-	log.Println("EEG--------------------------------------------------------")
-	conf := config.NewConfig()
-	log.Printf("** Server start http://127.0.0.1:%d", conf.Server.Port)
+	server := hconfig.GetServer()
+	log.Printf("** Server start http://127.0.0.1:%d", server.Port)
 
 	// 默认首页
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -27,9 +26,9 @@ func main() {
 	http.Handle("/graphql", cors.Default().Handler(graph.GraphqlHttpHandler))
 
 	// HttpServer
-	err := http.ListenAndServe(fmt.Sprintf(":%d", conf.Server.Port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", server.Port), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("END--------------------------------------------------------")
+	log.Println("***END")
 }

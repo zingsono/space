@@ -1,4 +1,4 @@
-package hhdate
+package hdate
 
 import (
 	"testing"
