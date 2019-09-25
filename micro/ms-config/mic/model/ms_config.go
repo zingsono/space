@@ -14,10 +14,10 @@ import (
 // 配置信息管理
 // 字段：服务名、配置JSON内容、备注、更新时间、创建时间
 type MsConfig struct {
-	Name      string    `json:"name" bson:"name"`
-	Value     string    `json:"value" bson:"value"`
-	Remark    string    `json:"remark" bson:"remark"`
-	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
+	Name      string                 `json:"name" bson:"name"`
+	Value     map[string]interface{} `json:"value" bson:"value"`
+	Remark    string                 `json:"remark" bson:"remark"`
+	UpdatedAt time.Time              `json:"updatedAt" bson:"updatedAt"`
 }
 
 func (*MsConfig) Collection() *mongo.Collection {

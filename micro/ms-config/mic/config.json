@@ -1,0 +1,12 @@
+{
+  "application": {
+    "name": "config"
+  },
+  "server": {
+    "port": 50501
+  },
+  "mongodb": {
+      "db0":"mongodb://test:test@121.40.83.200:37017/test?authSource=admin&authMechanism=SCRAM-SHA-1"
+  }
+
+}

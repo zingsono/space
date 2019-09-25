@@ -8,12 +8,12 @@ import (
 
 	"github.com/rs/cors"
 
+	"mic/conf"
 	"mic/graph"
-	"mic/helper/hconfig"
 )
 
 func main() {
-	server := hconfig.GetServer()
+	server := conf.Now().Server
 	log.Printf("** Server start http://127.0.0.1:%d", server.Port)
 
 	// 默认首页

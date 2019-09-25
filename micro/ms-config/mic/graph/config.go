@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"encoding/json"
 	"log"
 
 	ql "github.com/graphql-go/graphql"
@@ -12,6 +13,7 @@ type Config struct {
 	Total int64
 	List  []model.MsConfig
 	Info  model.MsConfig
+	Value string
 }
 
 // Graphql Query
@@ -74,7 +76,7 @@ var ConfigQueryFields = ql.Fields{
 						Description: "配置信息",
 					}),
 					Args: ql.FieldConfigArgument{
-						"name": &ql.ArgumentConfig{Type: ql.String, Description: "服务名"},
+						"name": &ql.ArgumentConfig{Type: ql.NewNonNull(ql.String), Description: "服务名"},
 					},
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config info")
@@ -83,6 +85,21 @@ var ConfigQueryFields = ql.Fields{
 						return msConfig, e
 					},
 					Description: "配置信息详情",
+				},
+				"value": &ql.Field{
+					Name: "",
+					Type: ql.String,
+					Args: ql.FieldConfigArgument{
+						"name": &ql.ArgumentConfig{Type: ql.NewNonNull(ql.String), Description: "服务名"},
+					},
+					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
+						log.Printf("执行 query config value")
+						name := p.Args["name"].(string)
+						msConfig, e := (&model.MsConfig{}).FindOne(name)
+						return msConfig.Value, e
+					},
+					DeprecationReason: "",
+					Description:       "配置内容JSON字符串",
 				},
 			},
 			Description: "配置信息查询类型",
@@ -114,8 +131,17 @@ var ConfigMutationFields = ql.Fields{
 		},
 		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 			log.Printf("执行QL方法：%s", "config.configSave")
-			updateResult, err := (&(model.MsConfig{Name: p.Args["name"].(string), Value: p.Args["value"].(string)})).Save()
-			return updateResult, err
+			value := p.Args["value"].(string)
+			jsonMap := make(map[string]interface{})
+			e = json.Unmarshal([]byte(value), &jsonMap)
+			if e != nil {
+				return nil, e
+			}
+			updateResult, e := (&(model.MsConfig{Name: p.Args["name"].(string), Value: jsonMap})).Save()
+			if e != nil {
+				return nil, e
+			}
+			return updateResult, nil
 		},
 		Description: "新增/更新配置，响应成功更新条数",
 	},

@@ -1,6 +1,6 @@
-module github.com/zingsono/space/library/go/hhmongo
+module github.com/zingsono/space/library/go/hmongo
 
-go 1.12
+go 1.13
 
 require (
 	github.com/go-stack/stack v1.8.0 // indirect
