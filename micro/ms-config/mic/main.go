@@ -1,34 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-
-	"github.com/rs/cors"
-
-	"mic/conf"
-	"mic/graph"
+	"mic/hh/server"
+	"mic/model"
 )
 
 func main() {
-	server := conf.Now().Server
-	log.Printf("** Server start http://127.0.0.1:%d", server.Port)
-
-	// 默认首页
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "version 1")
-	})
-
-	// TODO 设置登录会话安全验证
-	// Graphql服务
-	http.Handle("/graphql", cors.Default().Handler(graph.GraphqlHttpHandler))
-
-	// HttpServer
-	err := http.ListenAndServe(fmt.Sprintf(":%d", server.Port), nil)
-	if err != nil {
-		log.Fatal(err)
+	for i := 0; i < 500; i++ {
+		// time.Sleep(1*time.Second)
+		go func() {
+			(&model.MsConfig{}).FindOne("config")
+		}()
 	}
-	log.Println("***END")
+	server.Run()
 }

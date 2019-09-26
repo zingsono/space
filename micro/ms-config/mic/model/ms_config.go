@@ -21,7 +21,7 @@ type MsConfig struct {
 }
 
 func (*MsConfig) Collection() *mongo.Collection {
-	return DB().Collection("ms_config")
+	return Connect().Collection("ms_config")
 }
 
 // 保存数据，不存在新增，存在则更新

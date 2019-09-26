@@ -1,28 +1,38 @@
 package graph
 
 import (
+	"log"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )
 
-// Github更新操作文档定义 https://developer.github.com/v4/mutation/
+// 参考Github更新操作文档定义 https://developer.github.com/v4/mutation/
 
 // Http Handler
 var GraphqlHttpHandler = handler.New(&handler.Config{
-	Schema:   &GraphqlSchema,
+	Schema:   GraphqlSchema(),
 	Pretty:   true,
 	GraphiQL: true,
 })
 
 // Graphql Schema
-var GraphqlSchema, _ = graphql.NewSchema(graphql.SchemaConfig{
-	Query:        QueryType,
-	Mutation:     MutationType,
-	Subscription: nil,
-	Types:        nil,
-	Directives:   nil,
-	Extensions:   nil,
-})
+var GraphqlSchema = func() *graphql.Schema {
+	newSchema, err := graphql.NewSchema(graphql.SchemaConfig{
+		Query:        QueryType,
+		Mutation:     MutationType,
+		Subscription: nil,
+		Types:        nil,
+		Directives:   nil,
+		Extensions:   nil,
+	})
+	if err != nil {
+		// 异常退出
+		log.Fatal(err)
+	}
+	log.Printf("GraphqlSchema Load Success...")
+	return &newSchema
+}
 
 // Graphql Query Type
 var QueryType = graphql.NewObject(graphql.ObjectConfig{
