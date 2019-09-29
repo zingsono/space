@@ -8,6 +8,7 @@
 
 - blog 技术笔记
 - project 项目代码
+- script 脚本代码
 - library 通用代码库
 - micro 微服务项目
 - example 示例代码
