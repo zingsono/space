@@ -1,7 +1,10 @@
-package model
+package collection
 
 import (
+	"context"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // 表名：ms_discover
@@ -15,4 +18,12 @@ type MsDiscover struct {
 	Port      string     `json:"port"`
 	Expires   time.Timer `json:"expires"`
 	UpdatedAt time.Timer `json:"updatedAt"`
+}
+
+func (*MsDiscover) Collection() *mongo.Collection {
+	return Db0().Collection("ms_discover")
+}
+
+func (m *MsDiscover) Save() {
+	return m.Collection().InsertOne(context.TODO(), m)
 }
