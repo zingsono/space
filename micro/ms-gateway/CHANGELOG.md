@@ -1,6 +1,4 @@
-# 配置中心（ms-config）
-
-Change Log 
+Chanage Log 
 
 ## 待实现功能
 - [Feature] 根据服务名数组查询配置集合

@@ -2,6 +2,7 @@ package graph
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 
 	ql "github.com/graphql-go/graphql"
@@ -96,7 +97,15 @@ var ConfigQueryFields = ql.Fields{
 						log.Printf("执行 query config value")
 						name := p.Args["name"].(string)
 						msConfig, e := (&collection.MsConfig{}).FindOne(name)
+						if e != nil {
+							e = errors.New("查询结果错误")
+							return nil, e
+						}
 						v, e := json.Marshal(msConfig.Value)
+						if e != nil {
+							e = errors.New("查询结果转JSON错误")
+							return nil, e
+						}
 						return string(v), e
 					},
 					DeprecationReason: "",
