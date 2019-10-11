@@ -20,33 +20,19 @@ type Mongo struct {
 	Db0 string `json:"db0"`
 }
 
-// 当前配置内容
+// 默认配置内容
 var Now = &Config{
 	Application: &Application{Name: "config"},
 	Server:      &Server{Port: 10508},
 	Mongo:       &Mongo{Db0: "mongodb://test:test@121.40.83.200:37017/test?authSource=admin&authMechanism=SCRAM-SHA-1"},
 }
 
-// 读取当前配置
-/*func Now() *Config {
-	return NowFile("")
+// 从配置中心读取配置内容
+func init() {
+
 }
 
-func NowFile(filename string) *Config {
-	if filename == "" {
-		filename = "./config.json"
-	}
-	if nowConfig != nil {
-		return nowConfig
-	}
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	nowConfig := &Config{}
-	err = json.Unmarshal(data, nowConfig)
-	if err != nil {
-		log.Fatalf("解析配置文件'%s'出错 %s", filename, err.Error())
-	}
-	return nowConfig
-}*/
+// 从命令行参数读取配置内容
+func init() {
+
+}

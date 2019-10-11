@@ -6,13 +6,13 @@ import (
 
 	ql "github.com/graphql-go/graphql"
 
-	"mic/model"
+	"mic/collection"
 )
 
 type Config struct {
 	Total int64
-	List  []model.MsConfig
-	Info  model.MsConfig
+	List  []collection.MsConfig
+	Info  collection.MsConfig
 	Value string
 }
 
@@ -81,7 +81,7 @@ var ConfigQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config info")
 						name := p.Args["name"].(string)
-						msConfig, e := (&model.MsConfig{}).FindOne(name)
+						msConfig, e := (&collection.MsConfig{}).FindOne(name)
 						return msConfig, e
 					},
 					Description: "配置信息详情",
@@ -95,7 +95,7 @@ var ConfigQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config value")
 						name := p.Args["name"].(string)
-						msConfig, e := (&model.MsConfig{}).FindOne(name)
+						msConfig, e := (&collection.MsConfig{}).FindOne(name)
 						return msConfig.Value, e
 					},
 					DeprecationReason: "",
@@ -137,7 +137,7 @@ var ConfigMutationFields = ql.Fields{
 			if e != nil {
 				return nil, e
 			}
-			updateResult, e := (&(model.MsConfig{Name: p.Args["name"].(string), Value: jsonMap})).Save()
+			updateResult, e := (&(collection.MsConfig{Name: p.Args["name"].(string), Value: jsonMap})).Save()
 			if e != nil {
 				return nil, e
 			}

@@ -1,5 +1,5 @@
 // Http Server
-package server
+package route
 
 import (
 	"fmt"

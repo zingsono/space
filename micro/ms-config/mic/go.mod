@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/go-yaml/yaml v2.1.0+incompatible // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/graphql-go/graphql v0.7.8
@@ -18,5 +17,4 @@ require (
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472 // indirect
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
 	golang.org/x/text v0.3.2 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966 // indirect
 )

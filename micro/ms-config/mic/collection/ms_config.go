@@ -1,4 +1,4 @@
-package model
+package collection
 
 import (
 	"context"
@@ -21,14 +21,14 @@ type MsConfig struct {
 }
 
 func (*MsConfig) Collection() *mongo.Collection {
-	return Connect().Collection("ms_config")
+	return Db0().Collection("ms_config")
 }
 
 // 保存数据，不存在新增，存在则更新
-func (conf *MsConfig) Save() (*mongo.UpdateResult, error) {
-	conf.UpdatedAt = time.Now().Local()
-	log.Println(conf)
-	updateResult, err := conf.Collection().UpdateOne(context.TODO(), bson.M{"name": conf.Name}, bson.M{"$set": conf}, options.Update().SetUpsert(true))
+func (c *MsConfig) Save() (*mongo.UpdateResult, error) {
+	c.UpdatedAt = time.Now().Local()
+	log.Println(c)
+	updateResult, err := c.Collection().UpdateOne(context.TODO(), bson.M{"name": c.Name}, bson.M{"$set": c}, options.Update().SetUpsert(true))
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -40,9 +40,9 @@ func (conf *MsConfig) Save() (*mongo.UpdateResult, error) {
 	return updateResult, err
 }
 
-func (m *MsConfig) FindOne(name string) (*MsConfig, error) {
+func (c *MsConfig) FindOne(name string) (*MsConfig, error) {
 	log.Printf("执行FindOne")
-	singleResult := m.Collection().FindOne(context.Background(), bson.M{"name": name})
+	singleResult := c.Collection().FindOne(context.Background(), bson.M{"name": name})
 	msConfig := &MsConfig{}
 	err := singleResult.Decode(msConfig)
 	if err != nil {
