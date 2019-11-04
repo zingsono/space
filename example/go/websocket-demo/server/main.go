@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("**************************************************************************************************")
+	fmt.Println("*********************************************************************************************")
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("WebSocket Server "))
 	})
@@ -22,7 +22,11 @@ func main() {
 		log.Println(ws.RemoteAddr().String())
 		for {
 			var v string
-			websocket.Message.Receive(ws, &v)
+			err := websocket.Message.Receive(ws, &v)
+			if err != nil {
+				log.Print(err)
+				break
+			}
 			log.Printf("接收到消息：%s", v)
 
 			go func() {
@@ -45,7 +49,7 @@ func Id32() string {
 
 // 启动HTTP服务监听
 func ListenAndServe() {
-	port := 50800
+	port := 5809
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 	log.Printf("Start server %s", addr)
 	err := http.ListenAndServe(addr, nil)
