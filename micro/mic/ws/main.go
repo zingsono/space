@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,20 +23,29 @@ var (
 
 // ** 启动服务
 func main() {
-	fmt.Println("Start server......")
+	fmt.Println("Start server ......")
 	// 初始化配置
 	config = NowConfig()
 
-	// 消息发送
-	http.HandleFunc("/put", func(writer http.ResponseWriter, request *http.Request) {
-		// NewMessage().Put()
-		writer.Write([]byte("msg put"))
+	// 默认首页
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write([]byte("/"))
 	})
 
-	// 消息订阅
-	http.Handle("/poll?cid=32uuid", websocket.Handler(func(ws *websocket.Conn) {
+	// 消息发送
+	http.HandleFunc("/put", func(writer http.ResponseWriter, request *http.Request) {
+		cid := request.FormValue("cid")
+		targetCid := request.FormValue("targetCid")
+		msg := request.FormValue("msg")
+		NewMessage().Put(cid, targetCid, msg)
+		writer.Header().Set("Content-Type", "application/json")
+		writer.Write([]byte("{\"errno\":\"00000\",\"error\":\"OK\"}"))
+	})
+
+	// 消息订阅 /poll?cid=32uuid
+	http.Handle("/poll", websocket.Handler(func(ws *websocket.Conn) {
 		log.Printf("RequestURI %s", ws.Request().RequestURI)
-		cid := ws.Request().RequestURI
+		cid := ws.Request().FormValue("cid")
 		NewMessage().Poll(cid, ws)
 	}))
 
@@ -52,7 +62,7 @@ type Config struct {
 func NowConfig() *Config {
 	return &Config{
 		Port:                  8610,
-		MongoConnectionString: "mongodb://test:test@121.40.83.200:37017/test?authSource=admin&authMechanism=SCRAM-SHA-1",
+		MongoConnectionString: "mongodb://unionlive:unionlive@proxy.unionlive.com:27017/unionlive?authSource=admin&authMechanism=SCRAM-SHA-1",
 	}
 }
 
@@ -80,6 +90,11 @@ func (m *Message) Collection() *mongo.Collection {
 	return Db().Collection("ws")
 }
 
+func (m *Message) ToString() string {
+	v, _ := json.Marshal(m)
+	return string(v)
+}
+
 // 发送消息
 func (m *Message) Put(origin, targetCid, msg string) {
 	m.Cid = targetCid
@@ -89,19 +104,25 @@ func (m *Message) Put(origin, targetCid, msg string) {
 	m.CreatedAt = time.Now()
 	m.Expires = time.Now()
 	m.Collection().InsertOne(context.TODO(), m)
+	log.Println("put：" + m.ToString())
 }
 
 // 订阅消息
 func (m *Message) Poll(cid string, ws *websocket.Conn) *Message {
-	ctx := context.TODO()
-	changeStream, err := m.Collection().Watch(ctx, &bson.M{"match": &bson.M{"cid": cid}})
+	// 只监听insert操作
+	match := bson.D{{"operationType", "insert"}, {"fullDocument.cid", cid}}
+	changeStreamOptions := options.ChangeStream().SetBatchSize(1).SetFullDocument(options.UpdateLookup)
+	changeStream, err := m.Collection().Watch(context.TODO(), mongo.Pipeline{{{"$match", match}}}, changeStreamOptions)
 	if err != nil {
 		log.Print(err)
 	}
 	for {
-		if changeStream.Next(ctx) {
-			bson.Unmarshal(changeStream.Current, &m)
+		if changeStream.Next(context.TODO()) {
+			log.Println(changeStream.Current.String())
+			log.Println(changeStream.Current.Lookup("fullDocument"))
+			changeStream.Current.Lookup("fullDocument").Unmarshal(m)
 			// 发送Ws消息
+			log.Print("Message.send: " + m.Msg)
 			err := websocket.Message.Send(ws, m.Msg)
 			if err != nil {
 				log.Print(err)
