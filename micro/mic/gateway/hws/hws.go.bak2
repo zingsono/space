@@ -1,0 +1,197 @@
+package hws
+
+import (
+	"log"
+
+	"golang.org/x/net/websocket"
+)
+
+type M struct {
+	// 消息唯一编号
+	Tid string `json:"tid"`
+	// 服务名，根据服务名查询转发目标
+	Name string `json:"name"`
+	// 消息内容
+	Msg string `json:"msg"`
+}
+
+type MReq struct {
+	M
+	// 来源ws连接
+	origin *websocket.Conn
+}
+
+type MRes struct {
+	M
+}
+
+// 连接信息，key为连接URL字符串
+var wsmap = make(ConcurrentMap, 32)
+
+// 消息ID对应响应消息通道
+var reschanmap = make(ConcurrentMap, 64)
+
+// 发送消息，接收响应
+func (m *MReq) Invoke() MRes {
+	reschanmap.Put(m.Tid, make(chan MRes))
+	m.Send()
+	msg := <-reschanmap.Get(m.Tid).(chan MRes)
+	reschanmap.Del(m.Tid)
+	return msg
+}
+
+func (m *MReq) Send() {
+	err := websocket.JSON.Send(m.Connect(), m)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (m *MReq) Connect() *websocket.Conn {
+	// TODO ws连接URL，根据name获取
+	url := m.Name
+
+	// 根据url缓存ws连接，如果连接可用直接返回
+	if wsmap.Get(url) != nil {
+		return wsmap.Get(url).(*websocket.Conn)
+	}
+	ws, err := websocket.Dial(url, "", "http://gateway")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// 使用新线程订阅消息
+	go subscribe(ws, url)
+	return ws
+}
+
+func subscribe(ws *websocket.Conn, url string) {
+	wsmap.Put(url, ws)
+	for {
+		var res MRes
+		err := websocket.JSON.Receive(ws, &res)
+		if err != nil {
+			wsmap.Del(url)
+			log.Fatal(err)
+		}
+		reschanmap.Get(res.Tid).(chan MRes) <- res
+	}
+}
+
+// 网关调用接口方法
+func WsGraphqlGateway(ws *websocket.Conn) {
+	log.Printf("RequestURI %s", ws.Request().RequestURI)
+
+	oc := make(chan *MReq)
+	go func() {
+		r := <-oc
+		v := r.Invoke()
+		err := websocket.JSON.Send(r.origin, v)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	for {
+		// 接收JSON格式Hws结构体消息
+		var req *MReq
+		err := websocket.JSON.Receive(ws, &req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		req.origin = ws
+		oc <- req
+	}
+}
+
+type Origin struct {
+	// 消息来源连接
+	orgin *websocket.Conn
+
+	// 发起的连接
+	target *websocket.Conn
+}
+
+func (o *Origin) subscribe() {
+	or := make(chan MRes)
+	go func() {
+		res := <-or
+		err := websocket.JSON.Send(o.orgin, &res)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	for {
+		var res MRes
+		err := websocket.JSON.Receive(o.target, &res)
+		if err != nil {
+			log.Fatal(err)
+		}
+		or <- res
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// 发送消息：发送请求、发送响应
+// 订阅消息：订阅请求、订阅响应
+
+type PReq struct {
+	M
+}
+
+type PRes struct {
+	M
+}
+
+type SReq struct {
+	M
+}
+
+// 订阅响应
+type SRes struct {
+	M
+	ws *websocket.Conn
+
+}
+
+
+func connect(name string) *websocket.Conn {
+	// TODO ws连接URL，根据name获取
+	url := name
+
+	// 根据url缓存ws连接，如果连接可用直接返回
+	if wsmap.Get(url) != nil {
+		return wsmap.Get(url).(*websocket.Conn)
+	}
+	ws, err := websocket.Dial(url, "", "http://gateway")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// 使用新线程订阅消息
+	go subscribe(ws, url)
+	return ws
+}
+
+func subscribe(ws *websocket.Conn, url string) {
+	wsmap.Put(url, ws)
+	for {
+		var res MRes
+		err := websocket.JSON.Receive(ws, &res)
+		if err != nil {
+			wsmap.Del(url)
+			log.Fatal(err)
+		}
+		reschanmap.Get(res.Tid).(chan MRes) <- res
+	}
+}
+
+// 推送请求消息
+func (PReq *PReq) Send()  {
+	//
+}
+
+// 微服务调用，推送请求，订阅响应
+func Feign(r PReq) SRes {
+
+	r.Send()
+
+}

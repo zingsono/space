@@ -39,8 +39,12 @@ func GraphqlGateway(ws *websocket.Conn) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		msgchan.Store(mReq.Tid, make(chan MRes))
 		go func() {
+			// TODO mReq验证签名、解密等操作
+
+			// 初始化消息通道
+			msgchan.Store(mReq.Tid, make(chan MRes))
+
 			// 调用其它服务
 			err := websocket.JSON.Send(connect(mReq.Name), mReq)
 			if err != nil {
@@ -53,6 +57,9 @@ func GraphqlGateway(ws *websocket.Conn) {
 				log.Fatal("msgchan ok=false mReq.Tid=" + mReq.Tid)
 			}
 			mRes := <-v.(chan MRes)
+			// TODO 消息加密加签名
+
+			// 回复消息
 			websocket.JSON.Send(ws, mRes)
 		}()
 	}
