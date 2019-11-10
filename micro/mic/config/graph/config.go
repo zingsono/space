@@ -7,13 +7,13 @@ import (
 
 	ql "github.com/graphql-go/graphql"
 
-	"config/collection"
+	"config/mgodb"
 )
 
 type Config struct {
 	Total int64
-	List  []collection.MsConfig
-	Info  collection.MsConfig
+	List  interface{}
+	Info  interface{}
 	Value string
 }
 
@@ -82,7 +82,7 @@ var ConfigQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config info")
 						name := p.Args["name"].(string)
-						msConfig, e := (&collection.MsConfig{}).FindOne(name)
+						msConfig, e := mgodb.NewConfig().FindOne(name)
 						return msConfig, e
 					},
 					Description: "配置信息详情",
@@ -96,7 +96,7 @@ var ConfigQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config value")
 						name := p.Args["name"].(string)
-						msConfig, e := (&collection.MsConfig{}).FindOne(name)
+						msConfig, e := mgodb.NewConfig().FindOne(name)
 						if e != nil {
 							e = errors.New("查询结果错误")
 							return nil, e
@@ -147,11 +147,9 @@ var ConfigMutationFields = ql.Fields{
 			if e != nil {
 				return nil, e
 			}
-			updateResult, e := (&(collection.MsConfig{Name: p.Args["name"].(string), Value: jsonMap})).Save()
-			if e != nil {
-				return nil, e
-			}
-			return updateResult, nil
+			// updateResult := nil // (&(collection.MsConfig{Name: p.Args["name"].(string), Value: jsonMap})).Save()
+
+			return nil, nil
 		},
 		Description: "新增/更新配置，响应成功更新条数",
 	},

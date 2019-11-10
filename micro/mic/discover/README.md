@@ -17,6 +17,30 @@ ws服务。
 
 
 
+## 功能说明
+
+Watch监听配置集合的新增修改删除操作。 Websocket发送更新消息到业务服务。
+
+websocket服务：`/ws/config`
+
+接收服务注册报文：
+```json
+{
+  "name": "serviceName",
+  "host": "127.0.0.1",
+  "port": "80",
+  "msNames": ["default","mongodb","serviceName"]
+}
+```
+
+发送服务配置报文：
+```json
+{
+  "serviceName": {  },
+  "serviceName2": {  }
+}
+```
+
 
 
 # Change Log 

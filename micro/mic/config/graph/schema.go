@@ -44,7 +44,7 @@ var GraphqlSchema = func() *graphql.Schema {
 		// 异常退出
 		log.Fatal(err)
 	}
-	log.Printf("GraphqlSchema Load Success...")
+	log.Printf("GraphqlSchema Load Success")
 	return &newSchema
 }
 
