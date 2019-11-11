@@ -13,16 +13,16 @@ WebSocket服务：`/ws/config`
 
 业务服务发送订阅报文：
 ```json
-{
-  "serviceName": ["default","mongodb","serviceName"]
-}
+{"gateway": ["default","mongodb"]}
 ```
 
 配置服务发送配置报文：
 ```json
 {
-  "key": {  },
-  "keys": {  }
+    "name":{
+      "key": {  },
+      "keys": {  }
+    }
 }
 ```
 

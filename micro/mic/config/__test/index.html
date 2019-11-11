@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="hans_cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Config WS test</title>
+
+</head>
+<body>
+WebSocket ...
+<script>
+    // 打开一个 web socket
+    let ws = new WebSocket("ws://localhost:5800/ws/config");
+    ws.onopen = function () {
+        console.log("onopen...");
+        ws.send(`{"gateway": ["default","mongodb"]}`)
+    };
+    ws.onmessage = function (evt) {
+        let received_msg = evt.data;
+        console.log("onmessage:",received_msg);
+    };
+    ws.onclose = function () {
+        // 关闭 websocket
+        console.log("onclose");
+    };
+</script>
+</body>
+</html>

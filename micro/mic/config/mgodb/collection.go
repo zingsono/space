@@ -25,8 +25,8 @@ type mgo struct {
 
 func (m *mgo) GetDatabase(name string) *mongo.Database {
 	db, ok := m.dbs.Load(name)
-	if ok {
-		return nil
+	if !ok {
+		panic(fmt.Sprintf("No Mongodb connection was obtained '%s'", name))
 	}
 	return db.(*mongo.Database)
 }

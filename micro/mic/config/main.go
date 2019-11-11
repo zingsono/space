@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"sync"
 
 	"golang.org/x/net/websocket"
 
@@ -53,49 +54,82 @@ func PrintStack() {
 	}
 }
 
-var app = &Application{Name: "config", Host: "0.0.0.0", Port: 5800}
-
 type Application struct {
 	Name string `json:"name"`
 	Host string `json:"host"`
 	Port int    `json:"port"`
 }
 
+var app = &Application{Name: "config", Host: "0.0.0.0", Port: 5800}
+
 func (app *Application) ListenAndServe() {
 	app.Handles()
-	var defaultHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(404) })
-
-	log.Printf("MicroService: %s   ListenAndServe %s:%d", app.Name, app.Host, app.Port)
-	log.Printf("Start server http://127.0.0.1:%d", app.Port)
-	panic(http.ListenAndServe(fmt.Sprintf("%s:%d", app.Host, app.Port), defaultHandler))
+	log.Printf("MicroService: %s  ListenAndServe %s:%d   Start server http://127.0.0.1:%d", app.Name, app.Host, app.Port, app.Port)
+	panic(http.ListenAndServe(fmt.Sprintf("%s:%d", app.Host, app.Port), nil))
 }
 
 func (app *Application) Handles() {
 
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Write([]byte("MicroService:config"))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFoundHandler().ServeHTTP(w, r)
+			return
+		}
+		w.Write([]byte("MicroService:config"))
 	})
 
 	// Graphql服务
 	http.Handle("/graphql", graph.GraphqlHttpHandler())
 
+	var (
+		// 服务被哪些服务订阅
+		confarr sync.Map
+		// WS连接缓存
+		confws sync.Map
+	)
+	pushConf := func(key string, value map[string]interface{}) {
+		arrLoad, ok := confarr.Load(key)
+		if !ok {
+			return
+		}
+		for _, item := range arrLoad.([]string) {
+			wsLoad, ok := confws.Load(item)
+			if !ok {
+				continue
+			}
+			err := websocket.JSON.Send(wsLoad.(*websocket.Conn), value)
+			if err != nil {
+				log.Print(err)
+			}
+		}
+	}
+	// Watch config
+	go mgodb.NewConfig().Watch(pushConf)
+
 	// 配置订阅服务
 	http.Handle("/ws/config", websocket.Handler(func(ws *websocket.Conn) {
+		log.Printf("request uri %s", ws.Request().RequestURI)
 		for {
 			var mq map[string][]string
 			err := websocket.JSON.Receive(ws, &mq)
 			if err != nil {
 				log.Panicln(err)
 			}
-			// 启动新线程，watch mongodb collection
-			go func() {
-				mgodb.NewConfig().Watch(nil, func(value map[string]interface{}) {
-					err := websocket.JSON.Send(ws, value)
-					if err != nil {
-						log.Panicln(err)
+			log.Printf("接收消息：%s", mq)
+			for k, v := range mq {
+				for _, n := range v {
+					load, ok := confarr.Load(n)
+					if ok {
+						confarr.Store(n, append(load.([]string), k))
+					} else {
+						confarr.Store(n, []string{k})
 					}
-				})
-			}()
+				}
+				confws.Store(k, ws)
+
+				// 查询数据库回复订阅配置信息
+				mgodb.NewConfig().Query(v, pushConf)
+			}
 		}
 	}))
 

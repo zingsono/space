@@ -2,6 +2,7 @@ package mgodb
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"time"
 
@@ -14,7 +15,7 @@ import (
 // 配置信息管理
 // 字段：服务名、配置JSON内容、备注、更新时间、创建时间
 type Config struct {
-	Key       string                 `json:"name" bson:"key"`
+	Key       string                 `json:"key" bson:"key"`
 	Value     map[string]interface{} `json:"value" bson:"value"`
 	Remark    string                 `json:"remark" bson:"remark"`
 	UpdatedAt time.Time              `json:"updatedAt" bson:"updatedAt"`
@@ -56,11 +57,45 @@ func (c *Config) FindOne(key string) (*Config, error) {
 	return msConfig, nil
 }
 
+// 查询配置
+func (c *Config) Query(keys []string, updateConfig func(name string, value map[string]interface{})) {
+	collection := c.Collection()
+	cursor, err := collection.Find(context.TODO(), bson.M{"key": bson.M{"$in": keys}}, options.Find().SetProjection(bson.M{"key": 1, "value": 1}))
+	if err != nil {
+		log.Panic(err)
+	}
+	/*var data []interface{}
+	err = cursor.All(context.TODO(),data)
+	if err !=nil {
+		log.Panic(err)
+	}
+	log.Print(data)*/
+	for cursor.Next(context.TODO()) {
+		if err := cursor.Err(); err != nil {
+			log.Panic(err)
+		}
+		var row Config
+		err = cursor.Decode(&row)
+		if err != nil {
+			log.Panic(err)
+		}
+		b, err := json.Marshal(row)
+		if err != nil {
+			log.Panic(err)
+		}
+		log.Print(string(b))
+		/*key:= cursor.Current.Lookup("key").String()
+		var value map[string]interface{}
+		cursor.Current.Lookup("value").Unmarshal(&value)
+		updateConfig(key,value)*/
+	}
+}
+
 // 观察配置更新
-func (c *Config) Watch(keys []string, updateConfig func(value map[string]interface{})) {
+func (c *Config) Watch(updateConfig func(name string, value map[string]interface{})) {
 	collection := c.Collection()
 	pipeline := mongo.Pipeline{{
-		{"$match", bson.M{"operationType": bson.M{"$in": bson.A{"insert", "updated"}}}},
+		{"$match", bson.M{"operationType": bson.M{"$in": bson.A{"insert", "updated", "delete"}}}},
 	}}
 	changeStreamOptions := options.ChangeStream().SetBatchSize(1).SetFullDocument(options.UpdateLookup)
 	changeStream, err := collection.Watch(context.TODO(), pipeline, changeStreamOptions)
@@ -70,6 +105,6 @@ func (c *Config) Watch(keys []string, updateConfig func(value map[string]interfa
 	for changeStream.Next(context.TODO()) {
 		var config *Config
 		changeStream.Current.Lookup("fullDocument.value").Unmarshal(config)
-		updateConfig(config.Value)
+		updateConfig(config.Key, config.Value)
 	}
 }
