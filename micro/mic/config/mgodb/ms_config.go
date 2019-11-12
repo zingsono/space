@@ -2,7 +2,6 @@ package mgodb
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -11,6 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type Kv struct {
+	Key   string                 `json:"key" bson:"key"`
+	Value map[string]interface{} `json:"value" bson:"value"`
+}
 
 // 配置信息管理
 // 字段：服务名、配置JSON内容、备注、更新时间、创建时间
@@ -58,18 +62,12 @@ func (c *Config) FindOne(key string) (*Config, error) {
 }
 
 // 查询配置
-func (c *Config) Query(keys []string, updateConfig func(name string, value map[string]interface{})) {
+func (c *Config) Query(keys []string, updateConfig func(kv map[string]interface{})) {
 	collection := c.Collection()
 	cursor, err := collection.Find(context.TODO(), bson.M{"key": bson.M{"$in": keys}}, options.Find().SetProjection(bson.M{"key": 1, "value": 1}))
 	if err != nil {
 		log.Panic(err)
 	}
-	/*var data []interface{}
-	err = cursor.All(context.TODO(),data)
-	if err !=nil {
-		log.Panic(err)
-	}
-	log.Print(data)*/
 	for cursor.Next(context.TODO()) {
 		if err := cursor.Err(); err != nil {
 			log.Panic(err)
@@ -79,32 +77,36 @@ func (c *Config) Query(keys []string, updateConfig func(name string, value map[s
 		if err != nil {
 			log.Panic(err)
 		}
-		b, err := json.Marshal(row)
-		if err != nil {
-			log.Panic(err)
-		}
-		log.Print(string(b))
-		/*key:= cursor.Current.Lookup("key").String()
-		var value map[string]interface{}
-		cursor.Current.Lookup("value").Unmarshal(&value)
-		updateConfig(key,value)*/
+		kv := make(map[string]interface{})
+		kv[row.Key] = row.Value
+		log.Print("################")
+		updateConfig(kv)
 	}
 }
 
 // 观察配置更新
-func (c *Config) Watch(updateConfig func(name string, value map[string]interface{})) {
+func (c *Config) Watch(updateConfig func(kv map[string]interface{})) {
 	collection := c.Collection()
 	pipeline := mongo.Pipeline{{
-		{"$match", bson.M{"operationType": bson.M{"$in": bson.A{"insert", "updated", "delete"}}}},
+		{"$match", bson.M{"operationType": bson.M{"$in": bson.A{"insert", "update"}}}},
 	}}
+	// Watch 新增与更新操作
+	// update: {"_id": {"_data": "825DC9F595000000012B022C0100296E5A10043306C94DE71F44B684510C3E35B9F1F646645F696400645DC896DF0319D57180B38E570004"},"operationType": "update","clusterTime": {"$timestamp":{"t":"1573516693","i":"1"}},"ns": {"db": "msde","coll": "ms_config"},"documentKey": {"_id": {"$oid":"5dc896df0319d57180b38e57"}},"updateDescription": {"updatedFields": {"value": {"default": "mongo//:112"}},"removedFields": []},"fullDocument": {"_id": {"$oid":"5dc896df0319d57180b38e57"},"key": "mongo","value": {"default": "mongo//:112"}}}
+	// insert: {"_id": {"_data": "825DC9F5D4000000032B022C0100296E5A10043306C94DE71F44B684510C3E35B9F1F646645F696400645DC9F5D588A45A8498BFF5410004"},"operationType": "insert","clusterTime": {"$timestamp":{"t":"1573516756","i":"3"}},"fullDocument": {"_id": {"$oid":"5dc9f5d588a45a8498bff541"},"key": "test","value": {"k1": "value1"}},"ns": {"db": "msde","coll": "ms_config"},"documentKey": {"_id": {"$oid":"5dc9f5d588a45a8498bff541"}}}
+	// delete: {"_id": {"_data": "825DC9F5F8000000012B022C0100296E5A10043306C94DE71F44B684510C3E35B9F1F646645F696400645DC9F5D588A45A8498BFF5410004"},"operationType": "delete","clusterTime": {"$timestamp":{"t":"1573516792","i":"1"}},"ns": {"db": "msde","coll": "ms_config"},"documentKey": {"_id": {"$oid":"5dc9f5d588a45a8498bff541"}}}
+
 	changeStreamOptions := options.ChangeStream().SetBatchSize(1).SetFullDocument(options.UpdateLookup)
 	changeStream, err := collection.Watch(context.TODO(), pipeline, changeStreamOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for changeStream.Next(context.TODO()) {
-		var config *Config
-		changeStream.Current.Lookup("fullDocument.value").Unmarshal(config)
-		updateConfig(config.Key, config.Value)
+		log.Print(changeStream.Current.String())
+		var row Config
+		changeStream.Current.Lookup("fullDocument").Unmarshal(&row)
+		kv := make(map[string]interface{})
+		kv[row.Key] = row.Value
+		log.Print("------------------------------")
+		updateConfig(kv)
 	}
 }

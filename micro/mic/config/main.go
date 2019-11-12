@@ -82,26 +82,24 @@ func (app *Application) Handles() {
 	http.Handle("/graphql", graph.GraphqlHttpHandler())
 
 	var (
-		// 服务被哪些服务订阅
-		confarr sync.Map
-		// WS连接缓存
+		// 保存单项配置对应的ws连接集合,map[k1]map[k2]*websocket.Conn, k1=订阅服务名 k2=当前连接服务名
 		confws sync.Map
 	)
-	pushConf := func(key string, value map[string]interface{}) {
-		arrLoad, ok := confarr.Load(key)
-		if !ok {
-			return
-		}
-		for _, item := range arrLoad.([]string) {
-			wsLoad, ok := confws.Load(item)
+	pushConf := func(kv map[string]interface{}) {
+		for k, v := range kv {
+			smap, ok := confws.Load(k)
 			if !ok {
-				continue
+				return
 			}
-			err := websocket.JSON.Send(wsLoad.(*websocket.Conn), value)
-			if err != nil {
-				log.Print(err)
+			for name, ws := range smap.(map[string]*websocket.Conn) {
+				err := websocket.JSON.Send(ws, kv)
+				if err != nil {
+					log.Print(err)
+				}
+				log.Printf("给服务<%s>推送配置信息成功 %s=%s", name, k, v)
 			}
 		}
+
 	}
 	// Watch config
 	go mgodb.NewConfig().Watch(pushConf)
@@ -109,27 +107,33 @@ func (app *Application) Handles() {
 	// 配置订阅服务
 	http.Handle("/ws/config", websocket.Handler(func(ws *websocket.Conn) {
 		log.Printf("request uri %s", ws.Request().RequestURI)
-		for {
-			var mq map[string][]string
-			err := websocket.JSON.Receive(ws, &mq)
-			if err != nil {
-				log.Panicln(err)
-			}
-			log.Printf("接收消息：%s", mq)
-			for k, v := range mq {
-				for _, n := range v {
-					load, ok := confarr.Load(n)
-					if ok {
-						confarr.Store(n, append(load.([]string), k))
-					} else {
-						confarr.Store(n, []string{k})
-					}
-				}
-				confws.Store(k, ws)
+		// 订阅当前服务的服务名
+		name := ws.Request().FormValue("name")
 
-				// 查询数据库回复订阅配置信息
-				mgodb.NewConfig().Query(v, pushConf)
+		defer ws.Close()
+		for {
+			var arr []string
+			err := websocket.JSON.Receive(ws, &arr)
+			if err != nil {
+				log.Printf("ws连接断开 %s", err)
+				break
 			}
+			log.Printf("接收消息：%s", arr)
+
+			// 当前ws连接，使用map缓存
+			for _, v := range arr {
+				smap, ok := confws.Load(v)
+				var m map[string]*websocket.Conn
+				if ok {
+					m = smap.(map[string]*websocket.Conn)
+				} else {
+					m = make(map[string]*websocket.Conn)
+				}
+				m[name] = ws
+				confws.Store(v, m)
+			}
+			// 查询数据库回复订阅配置信息
+			mgodb.NewConfig().Query(arr, pushConf)
 		}
 	}))
 

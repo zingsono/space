@@ -9,11 +9,11 @@
 
 使用Watch监听配置集合的新增修改删除操作。 Websocket发送更新消息到业务服务。
 
-WebSocket服务：`/ws/config`
+WebSocket服务：`/ws/config?name=appName`
 
 业务服务发送订阅报文：
 ```json
-{"gateway": ["default","mongodb"]}
+["default","mongodb"]
 ```
 
 配置服务发送配置报文：

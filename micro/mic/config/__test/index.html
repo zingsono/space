@@ -12,7 +12,7 @@ WebSocket ...
     let ws = new WebSocket("ws://localhost:5800/ws/config");
     ws.onopen = function () {
         console.log("onopen...");
-        ws.send(`{"gateway": ["default","mongodb"]}`)
+        ws.send(`{"gateway": ["default","mongo"]}`)
     };
     ws.onmessage = function (evt) {
         let received_msg = evt.data;
