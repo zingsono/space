@@ -7,14 +7,24 @@ import (
 	"github.com/graphql-go/handler"
 )
 
+// Graphql Schema
+
+// 查询字段定义
+var QueryFields = FieldsMerge()
+
+// 更新字段定义
+var MutationFields = FieldsMerge()
+
 // 参考Github更新操作文档定义 https://developer.github.com/v4/mutation/
 
 // Http Handler
-var GraphqlHttpHandler = handler.New(&handler.Config{
-	Schema:   GraphqlSchema(),
-	Pretty:   true,
-	GraphiQL: true,
-})
+var GraphqlHttpHandler = func() *handler.Handler {
+	return handler.New(&handler.Config{
+		Schema:   GraphqlSchema(),
+		Pretty:   true,
+		GraphiQL: true,
+	})
+}
 
 // Graphql Schema
 var GraphqlSchema = func() *graphql.Schema {
@@ -30,28 +40,24 @@ var GraphqlSchema = func() *graphql.Schema {
 		// 异常退出
 		log.Fatal(err)
 	}
-	log.Printf("GraphqlSchema Load Success...")
+	log.Printf("GraphqlSchema Load Success")
 	return &newSchema
 }
 
 // Graphql Query Type
 var QueryType = graphql.NewObject(graphql.ObjectConfig{
-	Name:       "Query",
-	Interfaces: nil,
-	Fields: FieldsMerge(
-		ConfigQueryFields,
-	),
+	Name:        "Query",
+	Interfaces:  nil,
+	Fields:      QueryFields,
 	IsTypeOf:    nil,
 	Description: "查询操作",
 })
 
 // Graphql Mutation Type
 var MutationType = graphql.NewObject(graphql.ObjectConfig{
-	Name:       "Mutation",
-	Interfaces: nil,
-	Fields: FieldsMerge(
-		ConfigMutationFields,
-	),
+	Name:        "Mutation",
+	Interfaces:  nil,
+	Fields:      MutationFields,
 	IsTypeOf:    nil,
 	Description: "更新操作",
 })
