@@ -29,5 +29,6 @@ func TestConfigWsClient(t *testing.T) {
 		b, err := json.Marshal(value)
 		Panic(err)
 		log.Print(string(b))
+
 	}
 }

@@ -1,4 +1,4 @@
-package main
+package hserve
 
 import (
 	"flag"
@@ -6,15 +6,15 @@ import (
 	"log"
 	"net/http"
 	"runtime"
-
-	"tbk/graph"
 )
 
-func main() {
+// 监听服务，可在handlerFun中加载业务配置
+func ListenAndServe(handlerFun func(app *Application)) {
 	fmt.Println("******************************************************************************************")
-	defer PrintStack()
+	defer printStack()
 	args()
-	app.ListenAndServe()
+	handlerFun(app)
+	app.listenAndServe()
 }
 
 func args() {
@@ -26,12 +26,11 @@ func args() {
 	flag.StringVar(&name, "name", app.Name, fmt.Sprintf("Set Application name. Default '%s'", app.Name))
 	flag.IntVar(&port, "port", app.Port, fmt.Sprintf("Set Port. Default is %d", app.Port))
 	flag.Parse()
-
 	app.Name = name
 	app.Port = port
 }
 
-func PrintStack() {
+func printStack() {
 	var buf [4096]byte
 	n := runtime.Stack(buf[:], false)
 	fmt.Printf("==> %s\n", string(buf[:n]))
@@ -47,16 +46,9 @@ type Application struct {
 	Port int    `json:"port"`
 }
 
-var app = &Application{Name: "config", Host: "0.0.0.0", Port: 5800}
+var app = &Application{Name: "default", Host: "0.0.0.0", Port: 55800}
 
-func (app *Application) ListenAndServe() {
-	app.Handles()
-	log.Printf("MicroService: %s  ListenAndServe %s:%d   Start server http://127.0.0.1:%d", app.Name, app.Host, app.Port, app.Port)
-	panic(http.ListenAndServe(fmt.Sprintf("%s:%d", app.Host, app.Port), nil))
-}
-
-func (app *Application) Handles() {
-
+func (app *Application) listenAndServe() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFoundHandler().ServeHTTP(w, r)
@@ -65,7 +57,6 @@ func (app *Application) Handles() {
 		w.Write([]byte("MicroService:config"))
 	})
 
-	// Graphql服务
-	http.Handle("/graphql", graph.GraphqlHttpHandler())
-
+	log.Printf("MicroService: %s  ListenAndServe %s:%d   Start server http://127.0.0.1:%d", app.Name, app.Host, app.Port, app.Port)
+	panic(http.ListenAndServe(fmt.Sprintf("%s:%d", app.Host, app.Port), nil))
 }

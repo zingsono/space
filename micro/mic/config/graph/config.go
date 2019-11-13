@@ -10,6 +10,11 @@ import (
 	"config/mgodb"
 )
 
+func init() {
+	MergeMutationFields(ConfigMutationFields)
+	MergeQueryFields(ConfigQueryFields)
+}
+
 type Config struct {
 	Total int64
 	List  interface{}
