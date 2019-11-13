@@ -7,15 +7,35 @@ import (
 	"github.com/graphql-go/handler"
 )
 
-// Graphql Schema
+// Graphql Schema Fields
+var (
+	queryFields    graphql.Fields
+	mutationFields graphql.Fields
+)
 
 // 查询字段定义
-var QueryFields = FieldsMerge()
+func MergeQueryFields(args ...graphql.Fields) {
+	if queryFields == nil {
+		queryFields = make(graphql.Fields)
+	}
+	for _, arg := range args {
+		for k, v := range arg {
+			queryFields[k] = v
+		}
+	}
+}
 
 // 更新字段定义
-var MutationFields = FieldsMerge()
-
-// 参考Github更新操作文档定义 https://developer.github.com/v4/mutation/
+func MergeMutationFields(args ...graphql.Fields) {
+	if mutationFields == nil {
+		mutationFields = make(graphql.Fields)
+	}
+	for _, arg := range args {
+		for k, v := range arg {
+			mutationFields[k] = v
+		}
+	}
+}
 
 // Http Handler
 var GraphqlHttpHandler = func() *handler.Handler {
@@ -29,8 +49,8 @@ var GraphqlHttpHandler = func() *handler.Handler {
 // Graphql Schema
 var GraphqlSchema = func() *graphql.Schema {
 	newSchema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query:        QueryType,
-		Mutation:     MutationType,
+		Query:        QueryType(),
+		Mutation:     MutationType(),
 		Subscription: nil,
 		Types:        nil,
 		Directives:   nil,
@@ -45,30 +65,23 @@ var GraphqlSchema = func() *graphql.Schema {
 }
 
 // Graphql Query Type
-var QueryType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Query",
-	Interfaces:  nil,
-	Fields:      QueryFields,
-	IsTypeOf:    nil,
-	Description: "查询操作",
-})
+var QueryType = func() *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:        "Query",
+		Interfaces:  nil,
+		Fields:      queryFields,
+		IsTypeOf:    nil,
+		Description: "查询操作",
+	})
+}
 
 // Graphql Mutation Type
-var MutationType = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Mutation",
-	Interfaces:  nil,
-	Fields:      MutationFields,
-	IsTypeOf:    nil,
-	Description: "更新操作",
-})
-
-// Merge Graphql Fields
-func FieldsMerge(args ...graphql.Fields) graphql.Fields {
-	fields := make(graphql.Fields)
-	for _, arg := range args {
-		for k, v := range arg {
-			fields[k] = v
-		}
-	}
-	return fields
+var MutationType = func() *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:        "Mutation",
+		Interfaces:  nil,
+		Fields:      mutationFields,
+		IsTypeOf:    nil,
+		Description: "更新操作",
+	})
 }
