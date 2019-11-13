@@ -11,11 +11,11 @@ import (
 )
 
 func init() {
-	MergeMutationFields(ConfigMutationFields)
-	MergeQueryFields(ConfigQueryFields)
+	MergeMutationFields(configMutationFields)
+	MergeQueryFields(configQueryFields)
 }
 
-type Config struct {
+type config struct {
 	Total int64
 	List  interface{}
 	Info  interface{}
@@ -23,7 +23,7 @@ type Config struct {
 }
 
 // Graphql Query
-var ConfigQueryFields = ql.Fields{
+var configQueryFields = ql.Fields{
 	"config": &ql.Field{
 		Type: ql.NewObject(ql.ObjectConfig{
 			Name: "ConfigQueryType",
@@ -121,7 +121,7 @@ var ConfigQueryFields = ql.Fields{
 		}),
 		Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 			log.Printf("执行 query config")
-			rs := &Config{}
+			rs := &config{}
 			return rs, e
 		},
 		Description: "配置查询",
@@ -129,9 +129,9 @@ var ConfigQueryFields = ql.Fields{
 }
 
 // Graphql Mutation
-var ConfigMutationFields = ql.Fields{
+var configMutationFields = ql.Fields{
 	"configSave": &ql.Field{
-		Type: UpdateResultType,
+		Type: updateResultType,
 		Args: ql.FieldConfigArgument{
 			"name": &ql.ArgumentConfig{
 				Type:         ql.NewNonNull(ql.String),
@@ -159,3 +159,15 @@ var ConfigMutationFields = ql.Fields{
 		Description: "新增/更新配置，响应成功更新条数",
 	},
 }
+
+// Mongodb 更新结果,对应结构体：mongo.UpdateResult
+var updateResultType = ql.NewObject(ql.ObjectConfig{
+	Name: "UpdateResultType",
+	Fields: ql.Fields{
+		"matchedCount":  &ql.Field{Type: ql.Int, Description: "更新条件匹配文档数量"},
+		"modifiedCount": &ql.Field{Type: ql.Int, Description: "更新文档数量"},
+		"upsertedCount": &ql.Field{Type: ql.Int, Description: "upsert时插入文档数量"},
+		"upsertedID":    &ql.Field{Type: ql.String, Description: "发生upsert时插入文档的标识符"},
+	},
+	Description: "Mongodb更新结果",
+})
