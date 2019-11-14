@@ -4,10 +4,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/rs/cors"
-
-	"mic/model"
 )
 
 func main() {
@@ -16,12 +12,13 @@ func main() {
 
 	// 默认首页
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Print("micro-control")
 		io.WriteString(w, "version 1")
 	})
 
 	// TODO 设置登录会话安全验证
 	// Graphql服务
-	http.Handle("/graphql", cors.Default().Handler(model.GraphqlHttpHandler))
+	// http.Handle("/graphql", cors.Default().Handler(hgraph.GraphqlHttpHandler()))
 
 	// HttpServer
 	err := http.ListenAndServe(":50508", nil)

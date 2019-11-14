@@ -1,4 +1,4 @@
-package mgodb
+package mgdb
 
 import (
 	"context"

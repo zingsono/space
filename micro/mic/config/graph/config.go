@@ -7,7 +7,7 @@ import (
 
 	ql "github.com/graphql-go/graphql"
 
-	"config/mgodb"
+	"config/mgdb"
 )
 
 func init() {
@@ -87,7 +87,7 @@ var configQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config info")
 						name := p.Args["name"].(string)
-						msConfig, e := mgodb.NewConfig().FindOne(name)
+						msConfig, e := mgdb.NewConfig().FindOne(name)
 						return msConfig, e
 					},
 					Description: "配置信息详情",
@@ -101,7 +101,7 @@ var configQueryFields = ql.Fields{
 					Resolve: func(p ql.ResolveParams) (i interface{}, e error) {
 						log.Printf("执行 query config value")
 						name := p.Args["name"].(string)
-						msConfig, e := mgodb.NewConfig().FindOne(name)
+						msConfig, e := mgdb.NewConfig().FindOne(name)
 						if e != nil {
 							e = errors.New("查询结果错误")
 							return nil, e

@@ -1,4 +1,4 @@
-package mgodb
+package mgdb
 
 import (
 	"context"
@@ -15,31 +15,32 @@ import (
 
 var (
 	DEFAULT = "default"
+
+	// Mongodb Connect, map[name]*mongo.Database
+	mgdb sync.Map
 )
 
-var Mgo = new(mgo)
-
-type mgo struct {
-	dbs sync.Map
+func Db() *mongo.Database {
+	return GetDatabase(DEFAULT)
 }
 
-func (m *mgo) GetDatabase(name string) *mongo.Database {
-	db, ok := m.dbs.Load(name)
+func GetDatabase(name string) *mongo.Database {
+	db, ok := mgdb.Load(name)
 	if !ok {
 		panic(fmt.Sprintf("No Mongodb connection was obtained '%s'", name))
 	}
 	return db.(*mongo.Database)
 }
 
-func (m *mgo) SetDatabase(name string, v *mongo.Database) {
+func SetDatabase(name string, v *mongo.Database) {
 	if name == "" {
 		name = DEFAULT
 	}
-	m.dbs.Store(name, v)
+	mgdb.Store(name, v)
 }
 
-func SetDatabase(name string, connectionString string) {
-	Mgo.SetDatabase(name, connect(connectionString))
+func SetConnectString(name string, connectionString string) {
+	SetDatabase(name, connect(connectionString))
 }
 
 // 注意处理连接panic

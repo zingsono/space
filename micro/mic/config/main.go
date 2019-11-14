@@ -12,7 +12,7 @@ import (
 	"golang.org/x/net/websocket"
 
 	"config/graph"
-	"config/mgodb"
+	"config/mgdb"
 )
 
 func main() {
@@ -29,19 +29,19 @@ func args() {
 		port int
 
 		// Mongodb连接字符串
-		mgdb string
+		mongo string
 	)
 	flag.StringVar(&name, "name", app.Name, fmt.Sprintf("Set Application name. Default '%s'", app.Name))
 	flag.IntVar(&port, "port", app.Port, fmt.Sprintf("Set Port. Default is %d", app.Port))
-	flag.StringVar(&mgdb, "mgdb", "", "Mongodb Connection String")
+	flag.StringVar(&mongo, "mgdb", "", "Mongodb Connection String")
 	flag.Parse()
-	if mgdb == "" {
+	if mongo == "" {
 		log.Fatalf("Error: Params '-mgdb' can not be empty > %s", os.Args)
 	}
 	app.Name = name
 	app.Port = port
 	// -mgdb=mongodb://msde:msde0508@121.40.83.200:37017/msde?authSource=msde&authMechanism=SCRAM-SHA-1
-	mgodb.SetDatabase("", mgdb)
+	mgdb.SetDatabase("", mongo)
 }
 
 func PrintStack() {
@@ -102,7 +102,7 @@ func (app *Application) Handles() {
 
 	}
 	// Watch config
-	go mgodb.NewConfig().Watch(pushConf)
+	go mgdb.NewConfig().Watch(pushConf)
 
 	// 配置订阅服务
 	http.Handle("/ws/config", websocket.Handler(func(ws *websocket.Conn) {
@@ -133,7 +133,7 @@ func (app *Application) Handles() {
 				confws.Store(v, m)
 			}
 			// 查询数据库回复订阅配置信息
-			mgodb.NewConfig().Query(arr, pushConf)
+			mgdb.NewConfig().Query(arr, pushConf)
 		}
 	}))
 
