@@ -31,7 +31,7 @@ var NewConfig = func() *Config {
 }
 
 func (*Config) Collection() *mongo.Collection {
-	return Mgo.GetDatabase(DEFAULT).Collection("ms_config")
+	return Collection("ms_config")
 }
 
 // 保存数据，不存在新增，存在则更新

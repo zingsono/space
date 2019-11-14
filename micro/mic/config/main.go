@@ -41,7 +41,7 @@ func args() {
 	app.Name = name
 	app.Port = port
 	// -mgdb=mongodb://msde:msde0508@121.40.83.200:37017/msde?authSource=msde&authMechanism=SCRAM-SHA-1
-	mgdb.SetDatabase("", mongo)
+	mgdb.SetConnectString(mongo)
 }
 
 func PrintStack() {
