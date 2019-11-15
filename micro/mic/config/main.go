@@ -33,7 +33,7 @@ func args() {
 	)
 	flag.StringVar(&name, "name", app.Name, fmt.Sprintf("Set Application name. Default '%s'", app.Name))
 	flag.IntVar(&port, "port", app.Port, fmt.Sprintf("Set Port. Default is %d", app.Port))
-	flag.StringVar(&mongo, "mgdb", "", "Mongodb Connection String")
+	flag.StringVar(&mongo, "mongo", "", "Mongodb Connection String")
 	flag.Parse()
 	if mongo == "" {
 		log.Fatalf("Error: Params '-mgdb' can not be empty > %s", os.Args)
@@ -55,12 +55,13 @@ func PrintStack() {
 }
 
 type Application struct {
-	Name string `json:"name"`
-	Host string `json:"host"`
-	Port int    `json:"port"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Host    string `json:"host"`
+	Port    int    `json:"port"`
 }
 
-var app = &Application{Name: "config", Host: "0.0.0.0", Port: 5800}
+var app = &Application{Name: "config", Version: "0.0.1", Host: "0.0.0.0", Port: 5800}
 
 func (app *Application) ListenAndServe() {
 	app.Handles()

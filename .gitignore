@@ -1,5 +1,6 @@
 logs
 *.log
+micro/build
 
 # IntelliJ IDEA
 .idea
