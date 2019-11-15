@@ -36,7 +36,7 @@ func args() {
 	flag.StringVar(&mongo, "mongo", "", "Mongodb Connection String")
 	flag.Parse()
 	if mongo == "" {
-		log.Fatalf("Error: Params '-mgdb' can not be empty > %s", os.Args)
+		log.Fatalf("Error: Params '-mongo' can not be empty > %s", os.Args)
 	}
 	app.Name = name
 	app.Port = port
