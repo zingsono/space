@@ -1,5 +1,8 @@
 # 淘宝客
 
+Nginx接收请求URL：`http://xxx.mz7z.com/index.html`
+网关接收请求URL： `http://127.0.0.1:5888/tbk/xxx/index.html`
+服务接收请求URL： `http://127.0.0.1:80/xxx/index.html`
 
 
 
