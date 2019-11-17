@@ -34,3 +34,5 @@ VALUES ('180010000000002', '180100000040005', '1', '99', '0x648E6BC2171EF9D9E050
         '0', 'wql', '20190524', '000000', '{}');
 
 ---------------------------------------------------------------------------------------------------------------------------------
+
+SELECT merc_id,merc_name_cn,city,telephone,addr,create_time,DECODE(IS_ISSUE,1,"是","否"),DECODE(IS_CHANNEL,l,"是","否") FROM ULTAB_A_MERCHANT WHERE IS_ISSUE = 1 OR IS_CHANNEL = 1
