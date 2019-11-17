@@ -7,7 +7,7 @@ NAME="config"
 VERSION="1.0"
 
 # 拉取项目源码
-git clone https://github.com/zingsono/space.git
+# git clone https://github.com/zingsono/space.git
 
 # 服务跟路径
 HPATH="/space/micro/mic/$NAME"
@@ -16,6 +16,8 @@ HPATH="/space/micro/mic/$NAME"
 cd $HPATH
 export GOPROXY=https://goproxy.cn
 go build -o ./build/$NAME
+
+cp -a ./resource ./build/
 
 # 进入容器构建目录构建Docker容器
 cd $HPATH/build

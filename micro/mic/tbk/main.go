@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"runtime"
+	"strings"
 
 	"tbk/graph"
 )
@@ -78,24 +80,39 @@ func PrintStack() {
 // HttpHandle
 func Handles() {
 
+	/*f,e := http.Dir("D:/Projects/space/micro/mic/tbk/cli/public").Open("/page.css")
+	if e != nil {
+		log.Print(e)
+	}
+	log.Print(f.Readdir(2))
+	*/
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Print(r.URL.Path)
+		// 静态文件服务
+		if strings.HasPrefix(r.URL.Path, "/public") {
+			f, e := ioutil.ReadDir("./")
+			if e != nil {
+				log.Print(e)
+			}
+			for _, v := range f {
+				log.Print(v.Name())
+			}
+			http.StripPrefix("/public", http.FileServer(http.Dir("resource/public"))).ServeHTTP(w, r)
+			return
+		}
 		if r.URL.Path != "/" {
 			http.NotFoundHandler().ServeHTTP(w, r)
 			return
 		}
-		w.Write([]byte("MicroService:" + app.Name))
+		io.WriteString(w, "Micro service:"+app.Name)
 	})
 
 	// Graphql服务
 	http.Handle("/graphql", graph.GraphqlHttpHandler())
 
-	// 静态文件服务
-	http.Handle("/assets/page.css", http.FileServer(http.Dir("public")))
-
-	// 网站首页，访问URL：http://127.0.0.1:5803/xxx/index.html
-	http.HandleFunc("xxx/index.html", func(w http.ResponseWriter, r *http.Request) {
-		t, err := template.ParseFiles("./")
+	// 网站首页，访问URL：http://127.0.0.1:80/index?xxx=tmallshop
+	http.HandleFunc("/index", func(w http.ResponseWriter, r *http.Request) {
+		t, err := template.ParseFiles("resource/template/tmall-shop-site-v1/index.html")
 		if err != nil {
 			log.Print(err)
 			io.WriteString(w, err.Error())
@@ -105,3 +122,10 @@ func Handles() {
 	})
 
 }
+
+/*
+var serveHandle = func(handle http.Handler)*http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	})
+}*/
