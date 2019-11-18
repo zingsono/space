@@ -15,6 +15,19 @@
 ```
 
 
+## 注册中心
+
+表名：ms_discover   
+字段：服务名、IP、port、过期时间、更新时间、
+      name   ip  port  expires  updatedAt
+      
+客户端心跳：定时心跳更新过期时间，超时由TTL索引剔除服务      
+客户端监听：更新事件、删除事件 
+     
+使用ws通信
+     
+
+
 # Change Log 
 
 ## 待实现功能
