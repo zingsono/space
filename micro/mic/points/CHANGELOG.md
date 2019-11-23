@@ -1,7 +1,7 @@
 Chanage Log 
 
 ## 待实现功能
-- [Feature] 根据服务名数组查询配置集合
+- [Feature]
 
 
 ## v1.0.0

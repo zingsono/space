@@ -1,4 +1,4 @@
-
+；
 --将所有云闪付渠道做不通知处理
 UPDATE ULTAB_BO_CHANNELINFO SET SALES_PLATFORM_ID = NULL
 WHERE CHANNEL_ID = '180210001130000'
@@ -54,3 +54,9 @@ WHERE HOSTSETTLEDATE BETWEEN  '20190930' AND '20191111'
       )
 ORDER BY host_date, host_time
 
+--------------------------------------------------------------------------------------------------------------------------------
+
+select * from ULTAB_A_MERCHANT where MERC_ID = '182000899000001'
+
+
+select * from ULTAB_A_ORGINFO where ORG_ID = '180000000000001'
