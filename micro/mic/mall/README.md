@@ -10,7 +10,7 @@ banner
 
 ## 数据结构
 
-商城信息集合(ms_shop_site)
+商城信息集合(ms_mall)
 机构类型会员编号、商城名、商城LOGO、商城标题、商城描述、商城URL、商城Banner
 
 
