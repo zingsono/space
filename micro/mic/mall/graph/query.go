@@ -76,6 +76,7 @@ var MallInfoType = graphql.NewObject(graphql.ObjectConfig{
 	Interfaces: nil,
 	Fields: graphql.Fields{
 		"mallId":      &graphql.Field{Type: graphql.String, Description: "商城编号"},
+		"uid":         &graphql.Field{Type: graphql.String, Description: "商城用户ID"},
 		"name":        &graphql.Field{Type: graphql.String, Description: "商城名"},
 		"title":       &graphql.Field{Type: graphql.String, Description: "商城页面标题"},
 		"description": &graphql.Field{Type: graphql.String, Description: "商城页面描述"},

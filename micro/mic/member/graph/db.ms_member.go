@@ -1,3 +1,4 @@
+// 会员信息数据库操作
 package graph
 
 import (
@@ -21,7 +22,7 @@ const (
 	MEMBER_TYPE_ORG  MemberType = "2"
 )
 
-// 实名认证(1=是 0=否)
+// 实名认证(0=否 1=个人认证 2=企业认证 )
 type MemberReal string
 
 const (
@@ -31,22 +32,21 @@ const (
 
 // 会员对象
 type Member struct {
-	MemberId      string       // 会员编号
-	LoginId       string       // 登录账号
-	Password      string       // 密码，保存md5值
-	Mobile        string       // 用户绑定手机，可用于登录
-	Email         string       // 用户绑定邮箱,可用于登录
-	Nickname      string       // 用户昵称
-	Avatar        string       // 用户头像URL
-	Remark        string       // 备注信息，后台管理使用
-	CreatedAt     time.Time    // 注册时间
-	UpdatedAt     time.Time    // 最后更新时间
-	LastLoginTime time.Time    // 最后登录时间
-	Status        MemberStatus // 用户状态
-	Type          MemberType   // 用户类型
-	Real          MemberReal   // 是否实名认证
-	User          *User        // 个人用户扩展信息
-	Org           *Org         // 企业机构用户扩展信息
+	Uid           string       `bson:"uid" json:"uid"`                     // 会员编号，应用于所有服务
+	LoginId       string       `bson:"loginId" json:"loginId"`             // 登录账号
+	Password      string       `bson:"password" json:"password"`           // 密码，保存md5值
+	Mobile        string       `bson:"mobile" json:"mobile"`               // 用户绑定手机，可用于登录
+	Email         string       `bson:"email" json:"email"`                 // 用户绑定邮箱,可用于登录
+	Nickname      string       `bson:"nickname" json:"nickname"`           // 用户昵称
+	Avatar        string       `bson:"avatar" json:"avatar"`               // 用户头像URL
+	CreatedAt     time.Time    `bson:"createdAt" json:"createdAt"`         // 注册时间
+	UpdatedAt     time.Time    `bson:"updatedAt" json:"updatedAt"`         // 最后更新时间
+	LastLoginTime time.Time    `bson:"lastLoginTime" json:"lastLoginTime"` // 最后登录时间
+	Status        MemberStatus `bson:"status" json:"status"`               // 用户状态
+	Type          MemberType   `bson:"type" json:"type"`                   // 用户类型
+	Real          MemberReal   `bson:"real" json:"real"`                   // 是否实名认证
+	User          *MemberUser  `bson:"user" json:"user"`                   // 个人用户扩展信息
+	Org           *MemberOrg   `bson:"org" json:"org"`                     // 企业机构用户扩展信息
 }
 
 // 证件类型（1=身份证）
@@ -58,37 +58,37 @@ const (
 
 // 扩展字段个人会员信息(user)
 // 真实姓名、证件类型、证件号码、证件照正面、证件照反面、联系地址
-type User struct {
-	RealName   string     // 真实姓名
-	Province   string     // 省
-	City       string     // 市
-	Address    string     // 联系地址
-	IcType     UserIcType `bson:"icType" json:"icType"`   // 证件类型
-	IcNumber   string     `bson:"icNumber" json:icNumber` // 证件号码
-	IcAddress  string     // 证件地址
-	IcBegTime  time.Time  // 有效期开始
-	IcEndTime  time.Time  // 有效期结束
-	IcImgFront string     // 证件正面图片
-	IcImgBack  string     // 证件反面图片
+type MemberUser struct {
+	RealName   string     `bson:"realName" json:"realName"`     // 真实姓名
+	Province   string     `bson:"province" json:"province"`     // 省
+	City       string     `bson:"city" json:"city"`             // 市
+	Address    string     `bson:"address" json:"address"`       // 联系地址
+	IcType     UserIcType `bson:"icType" json:"icType"`         // 证件类型
+	IcNumber   string     `bson:"icNumber" json:icNumber`       // 证件号码
+	IcAddress  string     `bson:"icAddress" json:"icAddress"`   // 证件地址
+	IcBegTime  time.Time  `bson:"icBegTime" json:"icBegTime"`   // 有效期开始
+	IcEndTime  time.Time  `bson:"icEndTime" json:"icEndTime"`   // 有效期结束
+	IcImgFront string     `bson:"icImgFront" json:"icImgFront"` // 证件正面图片
+	IcImgBack  string     `bson:"icImgBack" json:"icImgBack"`   // 证件反面图片
 }
 
 // 扩展字段机构会员信息(org)
 // 证件号码、证件照片、机构名称、负责人姓名、负责人电话、联系地址
-type Org struct {
-	BelongOrg       string    // 所属管理会员编号，用于商户有门店的情况
-	BrandName       string    // 品牌名称
-	LogoUrl         string    // 品牌LOGO
-	LeadName        string    // 负责人姓名
-	LeadTel         string    // 负责人联系电话
-	LeadPost        string    // 负责人岗位
-	Address         string    // 经营地址
-	ServiceTel      string    // 客服电话
-	BlName          string    // 证件资料
-	BlNumber        string    // 证件号
-	BlImg           string    // 证件图片
-	BlBegTime       time.Time // 证件有效期开始
-	BlEndTime       time.Time // 证件有效期结束
-	BlLegalName     string    // 法人名
-	BlAddress       string    // 证件地址
-	BlBusinessScope string    // 营业范围
+type MemberOrg struct {
+	BelongUid       string    `bson:"belongUid" json:"belongUid"`             // 所属管理会员编号，用于商户有门店或者子账号的情况
+	BrandName       string    `bson:"BrandName" json:"BrandName"`             // 品牌名称
+	LogoUrl         string    `bson:"logoUrl" json:"logoUrl"`                 // 品牌LOGO
+	LeadName        string    `bson:"leadName" json:"leadName"`               // 负责人姓名
+	LeadTel         string    `bson:"leadTel" json:"leadTel"`                 // 负责人联系电话
+	LeadPost        string    `bson:"leadPost" json:"leadPost"`               // 负责人岗位
+	Address         string    `bson:"address" json:"address"`                 // 经营地址
+	ServiceTel      string    `bson:"serviceTel" json:"serviceTel"`           // 客服电话
+	BlName          string    `bson:"blName" json:"blName"`                   // 证件资料
+	BlNumber        string    `bson:"blNumber" json:"blNumber"`               // 证件号
+	BlImg           string    `bson:"blImg" json:"blImg"`                     // 证件图片
+	BlBegTime       time.Time `bson:"blBegTime" json:"blBegTime"`             // 证件有效期开始
+	BlEndTime       time.Time `bson:"blEndTime" json:"blEndTime"`             // 证件有效期结束
+	BlLegalName     string    `bson:"blLegalName" json:"blLegalName"`         // 法人名
+	BlAddress       string    `bson:"blAddress" json:"blAddress"`             // 证件地址
+	BlBusinessScope string    `bson:"blBusinessScope" json:"blBusinessScope"` // 营业范围
 }

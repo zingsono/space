@@ -25,7 +25,7 @@ var _query = graphql.Fields{
 				"single": &graphql.Field{
 					Type: MemberInfoType,
 					Args: graphql.FieldConfigArgument{
-						"memberId": &graphql.ArgumentConfig{
+						"uid": &graphql.ArgumentConfig{
 							Type:         graphql.String,
 							DefaultValue: nil,
 							Description:  "会员用户ID",
@@ -86,7 +86,7 @@ var MemberInfoType = graphql.NewObject(graphql.ObjectConfig{
 	Name:       "MemberInfoType",
 	Interfaces: nil,
 	Fields: graphql.Fields{
-		"memberId":      &graphql.Field{Type: graphql.String, Description: "会员用户ID"},
+		"uid":           &graphql.Field{Type: graphql.String, Description: "会员用户ID"},
 		"mobile":        &graphql.Field{Type: graphql.String, Description: "手机号"},
 		"email":         &graphql.Field{Type: graphql.String, Description: "邮箱"},
 		"lastLoginTime": &graphql.Field{Type: graphql.String, Description: "最后登录时间"},
@@ -104,7 +104,7 @@ var MemberInfoType = graphql.NewObject(graphql.ObjectConfig{
 				Description: "会员积分账户类型",
 			}),
 			Args: graphql.FieldConfigArgument{
-				"issueMemeberId": &graphql.ArgumentConfig{
+				"issueUid": &graphql.ArgumentConfig{
 					Type:         graphql.NewNonNull(graphql.String),
 					DefaultValue: nil,
 					Description:  "发行会员编号",
