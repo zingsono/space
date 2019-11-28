@@ -77,7 +77,7 @@ type Application struct {
 	Port    int    `json:"port"`
 }
 
-var app = &Application{Name: "shop", Version: "0.0.1", Host: "0.0.0.0", Port: 7058}
+var app = &Application{Name: "order", Version: "0.0.1", Host: "0.0.0.0", Port: 7058}
 
 func (app *Application) ListenAndServe() {
 	app.Handles()

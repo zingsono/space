@@ -53,7 +53,7 @@ var _query = graphql.Fields{
 						return 5000, e
 					},
 				},
-				"dataset": &graphql.Field{
+				"list": &graphql.Field{
 					Type: graphql.NewList(MemberInfoType),
 					/*Args: graphql.FieldConfigArgument{
 

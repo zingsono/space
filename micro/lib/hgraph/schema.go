@@ -87,3 +87,20 @@ var mutationType = func() *graphql.Object {
 		Description: "更新操作",
 	})
 }
+
+// 分页请求参数定义
+var PageArgument = graphql.FieldConfigArgument{
+	"limit": &graphql.ArgumentConfig{Type: graphql.Int, DefaultValue: 20, Description: "一次返回记录行数，默认20"},
+	"skip":  &graphql.ArgumentConfig{Type: graphql.Int, DefaultValue: 0, Description: "跳过记录行数"},
+}
+
+// 合并参数
+var Argument = func(args ...graphql.FieldConfigArgument) graphql.FieldConfigArgument {
+	var newArgument = make(graphql.FieldConfigArgument)
+	for _, item := range args {
+		for k, v := range item {
+			newArgument[k] = v
+		}
+	}
+	return newArgument
+}

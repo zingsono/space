@@ -14,42 +14,41 @@ import (
 
 下单直接预扣除积分，如果预扣除不成功，则下单失败。
 
-
 积分不走收银台，因为进入收银台已经提交订单成功，系统如果积分不足，则订单无法继续。
+
+不同供货商需要拆单。
 */
 
 // 会员订单信息(ms_order)
 type Order struct {
-	// 订单通用基本信息字段
-	OrderId     string     `bson:"orderId" json:"orderId"`         // 订单编号
-	Uid         string     `bson:"uid" json:"uid"`                 // 下单用户ID
-	MallId      string     `bson:"mallId" json:"mallId"`           // 商城编号
-	MallUid     string     `bson:"mallUid" json:"mallUid"`         // 商城用户ID ,标记此订单谁销售，也是下单用户的积分发行商户
-	ProviderUid string     `bson:"providerUid" json:"providerUid"` // 供货商用户ID，标记此订单由谁供货并发货
-	Status      string     `bson:"status" json:"status"`           // 订单状态(0=待支付  1=已支付  2=已退款 3=部分已退款 8=已完成 9=已删除 )
-	CreatedAt   time.Time  `bson:"createdAt" json:"createdAt"`     // 订单创建时间
-	FinishTime  time.Time  `bson:"finishTime" json:"finishTime"`   // 订单完成时间
-	Remark      string     `bson:"remark" json:"remark"`           // 订单备注信息
-	Refund      *Refund    `bson:"refund" json:"refund"`           // 退款信息
-	Pay         *Pay       `bson:"pay" json:"pay"`                 // 订单支付信息
-	Express     *Express   `bson:"express" json:"express"`         // 订单快递物流
-	Details     []*Details `bson:"details" json:"details"`         // 订单产品明细
+	OrderId     string    `bson:"orderId" json:"orderId"`         // 订单编号
+	Uid         string    `bson:"uid" json:"uid"`                 // 下单用户ID
+	MallId      string    `bson:"mallId" json:"mallId"`           // 商城编号
+	MallUid     string    `bson:"mallUid" json:"mallUid"`         // 商城用户ID ,标记此订单谁销售，也是下单用户的积分发行商户
+	ProviderUid string    `bson:"providerUid" json:"providerUid"` // 供货商用户ID，标记此订单由谁供货并发货
+	Status      string    `bson:"status" json:"status"`           // 订单状态(0=待支付  1=已支付  2=已退款 3=部分已退款 8=已完成 9=已删除 )
+	CreatedAt   time.Time `bson:"createdAt" json:"createdAt"`     // 订单创建时间
+	FinishTime  time.Time `bson:"finishTime" json:"finishTime"`   // 订单完成时间
+	Remark      string    `bson:"remark" json:"remark"`           // 订单备注信息
 
-}
-
-// 订单支付信息
-type Pay struct {
+	// 订单支付信息
 	PayTime        time.Time `bson:"payTime" json:"payTime"`               // 支付时间
 	PayExpires     time.Time `bson:"payExpires" json:"payExpires"`         // 自动支付过期时间
-	OriginalAmount int64     `bson:"originalAmount" json:"originalAmount"` // 订单原始价格，没有使用积分，没有使用优惠券的价格
-	PayAmount      int64     `bson:"payAmount" json:"payAmount"`           // 实际支付订单总金额，单位分
-	PayPoints      int64     `bson:"payPoints" json:"payPoints"`           // 实际支付总积分 ，根据用户的积分数，查询出可抵扣的金额加上实际支付的订单金额，如果等于原价，则通过。
+	SupplyAmount   int64     `bson:"supplyAmount" json:"supplyAmount"`     // 供应商看到的订单价格，根据商品价格与数量计算
+	OriginalAmount int64     `bson:"originalAmount" json:"originalAmount"` // 订单原始价格，没有使用积分，没有使用优惠券的价格、
+	Amount         int64     `bson:"amount" json:"amount"`                 // 实际支付订单总金额，单位分
+	Points         int64     `bson:"points" json:"points"`                 // 实际支付总积分 ，根据用户的积分数，查询出可抵扣的金额加上实际支付的订单金额，如果等于原价，则通过。
+
+	Refund  *Refund    `bson:"refund" json:"refund"`   // 退款信息
+	Express *Express   `bson:"express" json:"express"` // 订单快递物流
+	Details []*Details `bson:"details" json:"details"` // 订单产品明细
 }
 
 // 退款信息
 type Refund struct {
 	Status      string    `bson:"status" json:"status"`           // 订单申请退款状态（10=未申请退款 11=申请整单退款 12=整单退款成功 13=整单退款拒绝 21=申请部分退款  22=部分退款成功  23=部分退款拒绝）
-	Amount      int64     `bson:"amount" json:"amount"`           // 订单总退款金额
+	Amount      int64     `bson:"amount" json:"amount"`           // 订单退款金额
+	Points      int64     `bson:"points" json:"points"`           // 订单退款积分
 	ApplyTime   time.Time `bson:"applyTime" json:"applyTime"`     // 申请退款时间
 	ApplyReason string    `bson:"applyReason" json:"applyReason"` // 申请原因
 	Images      []string  `bson:"images" json:"images"`           // 图片
@@ -82,9 +81,16 @@ type Express struct {
 type Details struct {
 	ProdId         string `bson:"prodId" json:"prodId"`                 // 产品编号
 	ProdName       string `bson:"prodName" json:"prodName"`             // 产品名
-	UnitPrice      int64  `bson:"unitPrice" json:"unitPrice"`           // 单价
+	UnitPrice      int64  `bson:"unitPrice" json:"unitPrice"`           // 销售单价
+	StockPrice     int64  `bson:"stockPrice" json:"stockPrice"`         // 进货单价
 	PointsPayRatio int64  `bson:"pointsPayRatio" json:"pointsPayRatio"` // 积分占产品单价的比率，产品单价的百分之多少可以使用积分支付 如：20%，此字段值为20 ，单价为100元的产品，有20元可以使用积分支付
 	Num            int    `bson:"num" json:"num"`                       // 数量
 	RefundNum      string `bson:"refundNum" json:"refundNum"`           // 退货数量（等于0代表未退货）
 	ImgUrl         string `bson:"imgUrl" json:"imgUrl"`                 // 产品图片
 }
+
+// 创建订单
+
+// 查询单个订单详情
+
+// 查询订单列表
