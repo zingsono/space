@@ -17,6 +17,23 @@ import (
 积分批次号集合(ms_points_batch)
 批次号、开始时间、完成时间、操作描述（如：批量赠送积分）、状态（0=创建批次 1=执行中 2=完成 =3失败）、结果简述、下载操作结果明细表格
 
+
+一个人有多个会员账号，对应每个机构存在一个账号，每个机构独立运营
+
+一个用户只有一个积分账户。
+
+积分账户设计
+发行积分会员
+使用积分会员
+------------------------------------------------
+1. 每个会员都有积分账户，都有一个发行发
+
+
+机构没有总得积分账号，但是有储值账户
+机构给用户发积分的时候，根据机构比例，扣除机构储蓄账户金额
+
+
+
 */
 
 // 积分账户状态（1=正常 2=禁用 9=注销）
@@ -30,8 +47,8 @@ const (
 
 // 积分账户信息 ms_points_account
 type PointsAccount struct {
-	Muid      string        `bson:"muid" json:"muid"`           // 当前用户的积分账户， muid与ouid标识一个积分账户
-	Ouid      string        `bson:"ouid" json:"ouid"`           // 发行机构会员用户ID
+	uid       string        `bson:"muid" json:"muid"`           // 会员积分账户
+	OrgUid    string        `bson:"ouid" json:"ouid"`           // 积分发行机构用户ID
 	Points    int64         `bson:"points" json:"points"`       // 账户剩余可用积分
 	Amount    int64         `bson:"amount" json:"amount"`       // 账户剩余积分可转换的现金金额
 	Status    AccountStatus `bson:"status" json:"status"`       // 状态（1=正常 2=禁用 9=注销）
