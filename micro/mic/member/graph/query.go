@@ -87,35 +87,17 @@ var MemberInfoType = graphql.NewObject(graphql.ObjectConfig{
 	Interfaces: nil,
 	Fields: graphql.Fields{
 		"uid":           &graphql.Field{Type: graphql.String, Description: "会员用户ID"},
+		"loginId":       &graphql.Field{Type: graphql.String, Description: "登录账号"},
 		"mobile":        &graphql.Field{Type: graphql.String, Description: "手机号"},
 		"email":         &graphql.Field{Type: graphql.String, Description: "邮箱"},
+		"nickname":      &graphql.Field{Type: graphql.String, Description: "昵称"},
+		"avatar":        &graphql.Field{Type: graphql.String, Description: "头像"},
+		"status":        &graphql.Field{Type: graphql.String, Description: "状态（1=正常 2=禁用 9=注销）"},
 		"lastLoginTime": &graphql.Field{Type: graphql.String, Description: "最后登录时间"},
 		"createdAt":     &graphql.Field{Type: graphql.String, Description: "会员注册时间"},
-		"memberType":    &graphql.Field{Type: graphql.String, Description: "会员类型（1=普通用户 2=机构用户）"},
-		"points": &graphql.Field{
-			Type: graphql.NewObject(graphql.ObjectConfig{
-				Name:       "MemberPointsType",
-				Interfaces: nil,
-				Fields: graphql.Fields{
-					"accountNo": &graphql.Field{Type: graphql.String, Description: "积分账户编号"},
-					"balance":   &graphql.Field{Type: graphql.Int, Description: "积分账户余额"},
-				},
-				IsTypeOf:    nil,
-				Description: "会员积分账户类型",
-			}),
-			Args: graphql.FieldConfigArgument{
-				"issueUid": &graphql.ArgumentConfig{
-					Type:         graphql.NewNonNull(graphql.String),
-					DefaultValue: nil,
-					Description:  "发行会员编号",
-				},
-			},
-			Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
-				// 调用积分账户查询用户积分
-				return "", e
-			},
-			Description: "会员积分账户，没有授权积分功能的服务此字段不可用",
-		},
+		// 普通用户信息
+		// 机构用户信息
+		// 操作用户信息
 	},
 	IsTypeOf:    nil,
 	Description: "会员用户信息",

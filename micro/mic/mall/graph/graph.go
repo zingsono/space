@@ -20,8 +20,8 @@ var (
 
 // 分页请求参数定义
 var PageArgument = graphql.FieldConfigArgument{
-	"limit": &graphql.ArgumentConfig{Type: graphql.Int, DefaultValue: 20, Description: "一次返回记录行数，默认20"},
 	"skip":  &graphql.ArgumentConfig{Type: graphql.Int, DefaultValue: 0, Description: "跳过记录行数"},
+	"limit": &graphql.ArgumentConfig{Type: graphql.Int, DefaultValue: 20, Description: "一次返回记录行数，默认20"},
 }
 
 // 合并参数

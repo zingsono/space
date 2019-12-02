@@ -23,19 +23,19 @@ var _MallQueryFields = graphql.Fields{
 						log.Print("MemberInfoType single............")
 						log.Println(p.Args)
 
-						return &Mall{MallId: "123123", Name: "名称", Title: "天猫商城"}, e
+						return &Mall{Uid: "123123", Name: "名称", Title: "天猫商城"}, e
 					},
 					Description: "商城信息查询",
 				},
 				"total": &graphql.Field{
 					Type:        graphql.Int,
-					Description: "会员总数，最大值5000，不能依赖此字段做统计。",
+					Description: "总数，最大值5000，不能依赖此字段做统计。",
 					Args:        Argument(MaillDatasetArg),
 					Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 						return 5000, e
 					},
 				},
-				"dataset": &graphql.Field{
+				"list": &graphql.Field{
 					Type: graphql.NewList(MallInfoType),
 					Args: Argument(PageArgument, MaillDatasetArg),
 					Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
@@ -43,11 +43,11 @@ var _MallQueryFields = graphql.Fields{
 						log.Println(p.Args)
 						return i, e
 					},
-					Description: "会员分页查询",
+					Description: "列表查询",
 				},
 			},
 			IsTypeOf:    nil,
-			Description: "会员查询类型",
+			Description: "商城查询类型",
 		}),
 		Args: nil,
 		Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
@@ -55,19 +55,19 @@ var _MallQueryFields = graphql.Fields{
 			return "", e
 		},
 		DeprecationReason: "",
-		Description:       "购物商城服务",
+		Description:       "商城服务",
 	},
 }
 
 // 单条记录查询参数定义
 var MaillIdArg = graphql.FieldConfigArgument{
-	"mallId": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String), DefaultValue: nil, Description: "商城编号"},
+	"uid": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String), DefaultValue: nil, Description: "商城用户编号"},
 }
 
 // 结果集查询参数定义
 var MaillDatasetArg = graphql.FieldConfigArgument{
-	"mallId": &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: nil, Description: "商城编号"},
-	"name":   &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: nil, Description: "商城名称"},
+	"uid":  &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: nil, Description: "商城编号"},
+	"name": &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: nil, Description: "商城名称"},
 }
 
 // 商城信息类型定义
@@ -75,7 +75,6 @@ var MallInfoType = graphql.NewObject(graphql.ObjectConfig{
 	Name:       "MallInfoType",
 	Interfaces: nil,
 	Fields: graphql.Fields{
-		"mallId":      &graphql.Field{Type: graphql.String, Description: "商城编号"},
 		"uid":         &graphql.Field{Type: graphql.String, Description: "商城用户ID"},
 		"name":        &graphql.Field{Type: graphql.String, Description: "商城名"},
 		"title":       &graphql.Field{Type: graphql.String, Description: "商城页面标题"},
@@ -101,9 +100,8 @@ var MallInfoType = graphql.NewObject(graphql.ObjectConfig{
 				Description: "广告类型",
 			})),
 			Args: graphql.FieldConfigArgument{
-				"key":    &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String), DefaultValue: nil, Description: "广告位标识字符串，如：banner"},
-				"mallId": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String), DefaultValue: nil, Description: "商城编号"},
-				"show":   &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: "1", Description: "是否展示（1=展示 0=隐藏），参数为空时返回全部，默认只返回展示状态的广告"},
+				"key":  &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String), DefaultValue: nil, Description: "广告位标识字符串，如：banner"},
+				"show": &graphql.ArgumentConfig{Type: graphql.String, DefaultValue: "1", Description: "是否展示（1=展示 0=隐藏），参数为空时返回全部，默认只返回展示状态的广告"},
 			},
 			Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 

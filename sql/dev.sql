@@ -60,3 +60,7 @@ select * from ULTAB_A_MERCHANT where MERC_ID = '182000899000001'
 
 
 select * from ULTAB_A_ORGINFO where ORG_ID = '180000000000001'
+
+------------------------------------------------------------------------------------------------------------
+-- 查询爱茜茜里 133998
+select * from UNIONLIVE.ULTAB_BO_USERINFO where MOBILEPHONE = '18930172810'

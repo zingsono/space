@@ -1,22 +1,23 @@
 package graph
 
 /**
-一个用户可以拥有多个商城
+业务说明：
+1. 用户ID就是商城ID,每个用户可以申请开一个商城；
+
 */
 
 // 商城站点信息集合 (ms_mall)
-// 字段： 商城编号、创建商城的用户、商城名称、商城备注描述、商城客服电话、客服邮箱、商城域名
+// 字段： 创建商城的用户、商城名称、商城备注描述、商城客服电话、客服邮箱、商城域名
 type Mall struct {
-	MallId  string `bson:"mallId" json:"mallId"`
-	Uid     string `bson:"uid" json:"uid"`
-	Name    string `bson:"name" json:"name"`
-	Title   string `bson:"title" json:"title"`
-	Remark  string `bson:"remark" json:"remark"`
-	LogoUrl string `bson:"logoUrl" json:"logoUrl"`
-	Domain  string `bson:"domain" json:"domain"`
-
-	// 商城广告信息管理，如Banner、侧边广告
-	Ad []*Ad `bson:"ad" json:"ad"`
+	Uid         string `bson:"uid" json:"uid"`                 // 用户编号，商城所属用户
+	Name        string `bson:"name" json:"name"`               // 商城名称
+	Title       string `bson:"title" json:"title"`             // 商城标题，用于网页Title
+	Description string `bson:"description" json:"description"` // 商城描述
+	Remark      string `bson:"remark" json:"remark"`           // 备注信息
+	Ico         string `bson:"ico" json:"ico"`                 // 备注信息
+	LogoUrl     string `bson:"logoUrl" json:"logoUrl"`         // 商城LOGO图
+	Domain      string `bson:"domain" json:"domain"`           // 商城访问域名
+	Ad          []*Ad  `bson:"ad" json:"ad"`                   // 商城广告信息管理，如Banner、侧边广告
 }
 
 // 广告是否展示
