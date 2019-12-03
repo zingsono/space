@@ -4,20 +4,21 @@ import (
 	"testing"
 )
 
-func TestReg(t *testing.T) {
+func TestRegister(t *testing.T) {
 	type args struct {
-		host string
-		ip   string
+		datacenter string
+		node       string
+		address    string
 	}
 	tests := []struct {
 		name string
 		args args
 	}{
-		{name: "intention", args: args{host: "", ip: ""}},
+		{name: "Register", args: args{datacenter: "", node: "ms", address: "192.168.0.2"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Reg(tt.args.host, tt.args.ip)
+			Register(tt.args.datacenter, tt.args.node, tt.args.address)
 		})
 	}
 }

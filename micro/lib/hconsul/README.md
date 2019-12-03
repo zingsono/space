@@ -1,4 +1,4 @@
-# hconsul 
+# hconsul （未测试完成）
 
  Consul 客户端发现注册。
 

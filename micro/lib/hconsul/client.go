@@ -24,29 +24,84 @@ func init() {
 	if addr := os.Getenv(api.HTTPAddrEnvName); addr == "" {
 		os.Setenv(api.HTTPAddrEnvName, "10.18.254.251:8500")
 	}
+
 }
 
-func Reg(host string, ip string) {
-	log.Print("EXEC............")
-
+// Consul Client
+func GetClient() *api.Client {
 	config := api.DefaultConfig()
 	client, err := api.NewClient(config)
 	if err != nil {
 		log.Panic(err)
 	}
-	connect := client.Connect()
+	return client
+}
 
-	log.Print(connect)
+func Register(datacenter, node, address string) {
+	log.Print("EXEC Register............")
 
-	/*intentions, queryMeta, err:=connect.Intentions(&api.QueryOptions{Datacenter: "dc1"})
+	if datacenter == "" {
+		datacenter = "dc1"
+	}
+	catalog := GetClient().Catalog()
+	_, err := catalog.Register(&api.CatalogRegistration{
+		ID:              "",
+		Node:            node,
+		Address:         address,
+		TaggedAddresses: nil,
+		NodeMeta:        nil,
+		Datacenter:      datacenter,
+		Service: &api.AgentService{
+			Kind:              "",
+			ID:                "s1",
+			Service:           "svf",
+			Tags:              nil,
+			Meta:              nil,
+			Port:              8090,
+			Address:           "10.18.0.11",
+			TaggedAddresses:   nil,
+			Weights:           api.AgentWeights{},
+			EnableTagOverride: false,
+			CreateIndex:       0,
+			ModifyIndex:       0,
+			ContentHash:       "",
+			Proxy:             nil,
+			Connect:           nil,
+		},
+		Check:          nil,
+		Checks:         nil,
+		SkipNodeUpdate: false,
+	}, nil)
+	_, err = catalog.Register(&api.CatalogRegistration{
+		ID:              "",
+		Node:            node,
+		Address:         address,
+		TaggedAddresses: nil,
+		NodeMeta:        nil,
+		Datacenter:      datacenter,
+		Service: &api.AgentService{
+			Kind:              "",
+			ID:                "s2",
+			Service:           "svf",
+			Tags:              nil,
+			Meta:              nil,
+			Port:              8090,
+			Address:           "10.18.0.12",
+			TaggedAddresses:   nil,
+			Weights:           api.AgentWeights{},
+			EnableTagOverride: false,
+			CreateIndex:       0,
+			ModifyIndex:       0,
+			ContentHash:       "",
+			Proxy:             nil,
+			Connect:           nil,
+		},
+		Check:          nil,
+		Checks:         nil,
+		SkipNodeUpdate: false,
+	}, nil)
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Print(queryMeta)
-	for _,intention := range intentions {
-		log.Print(intention.String())
-		log.Print(intention.SourceString())
-		log.Print(intention.DestinationString())
-	}*/
 
 }
