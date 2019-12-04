@@ -60,92 +60,17 @@ func (app *Application) ListenAndServe() {
 func Handles() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		/*if r.URL.Path != "/" {
-			http.NotFoundHandler().ServeHTTP(w, r)
-			return
-		}*/
 		io.WriteString(w, "MicroService:"+app.Name)
 	})
 
-	http.HandleFunc("/tt", func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "TT MicroService:"+app.Name)
-	})
-
-	h := GraphqlHttpHandler()
 	// Graphql服务
-	http.Handle("/graphql", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// ctx := context.WithValue(r.Context(), "token", "============================r.Header.Get()")
-		// token、用户id、用户名等信息存储header，用于记录操作日志
-		// h.ContextHandler(ctx, w, r)
-
-		/*bytes,err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			io.WriteString(w,err.Error())
-			return
-		}
-		body := string(bytes)
-		log.Print("Body="+body)*/
-		// io.WriteString(w,body)
-
-		h.ServeHTTP(w, r)
-		// io.WriteString(w,"gggg")
-	}))
-
-	http.HandleFunc("/api/v2/gateway", func(w http.ResponseWriter, r *http.Request) {
-		/*bytes, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			io.WriteString(w, err.Error())
-			return
-		}
-		source := source.NewSource(&source.Source{
-			Body: bytes,
-			Name: "GraphQL request",
-		})
-		// parse the source
-		AST, err := parser.Parse(parser.ParseParams{Source: source})
-		if err != nil {
-			log.Print(err)
-		}
-		// 解析出一级字段作为服务名
-		for _, operationDefinition := range AST.Definitions {
-			selectionSet := operationDefinition.(*ast.OperationDefinition).SelectionSet
-
-			for _, selection := range selectionSet.Selections {
-				field := selection.(*ast.Field).Name.Value
-
-				log.Print("sss=" + field)
-			}
-		}*/
-
-		io.WriteString(w, "OK")
-	})
-	http.HandleFunc("/api/v2/gateway2", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/v2/graphql", func(w http.ResponseWriter, r *http.Request) {
 		bytes, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			io.WriteString(w, err.Error())
 			return
 		}
 		hql := string(bytes)
-		// 遍历查询字符串,拆分不同服务
-		//services := make(map[string]string)
-
-		// 计数器
-		lb := 0
-
-		for i, ch := range hql {
-			char := fmt.Sprintf("%c", ch)
-			log.Printf("%d = %s ", i, char)
-			if char == "{" {
-				lb++
-			}
-			if char == "}" {
-				lb--
-				if lb == 1 {
-
-				}
-			}
-
-		}
 
 		io.WriteString(w, "OK")
 	})
