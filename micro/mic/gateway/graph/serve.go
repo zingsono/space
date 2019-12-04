@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/zingsono/space/micro/lib/hfeign"
+	"gitee.com/zingsono/space/micro/lib/hfeign"
 )
 
 func ListenServe() {
