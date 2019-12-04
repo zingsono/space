@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+
+	"github.com/zingsono/space/micro/lib/hfeign"
 )
 
 func ListenServe() {
@@ -71,8 +73,7 @@ func Handles() {
 			return
 		}
 		hql := string(bytes)
-
-		io.WriteString(w, "OK")
+		w.Write(hfeign.Graphql(hql))
 	})
 
 }
