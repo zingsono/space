@@ -21,6 +21,12 @@ query{
 编译镜像：docker pull golang:1.13-alpine
 运行环境：docker pull mszs/alpine:3.10
 
+运行容器：
+```
+docker run --name ms.gateway --network cluster -p 39701:7908 -dit registry.cn-hangzhou.aliyuncs.com/mszs/gateway:1.0
+```
+
+测试环境接口地址：http://211.152.57.29:39701/api/v2/graphql  
 
 ## Chanage Log 
 
